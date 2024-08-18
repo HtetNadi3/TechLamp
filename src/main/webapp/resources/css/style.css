@@ -1,0 +1,5 @@
+#editor-container {
+  resize: both;
+  overflow: auto;
+  min-height: 100px;
+}
