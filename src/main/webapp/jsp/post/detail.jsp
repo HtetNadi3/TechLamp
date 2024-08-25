@@ -8,6 +8,7 @@
 <title>Post Detail</title>
 </head>
 <body class="d-flex flex-column vh-100">
+  <input type="hidden" id="isFullPreview" value="true" />
   <div
     class="container-fluid flex-grow-1 d-flex align-items-center justify-content-center">
     <div class="card" style="width: 40%">
