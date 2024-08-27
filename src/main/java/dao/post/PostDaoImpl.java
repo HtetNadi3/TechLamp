@@ -14,10 +14,10 @@ import util.DatabaseConnection;
 
 public class PostDaoImpl implements PostDao {
     private Connection connection;
-    private final String INSERT_POST_SQL = "INSERT INTO post (title, content, delete_flag, created_user_id, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private final String INSERT_POST_SQL = "INSERT INTO post (title, content, delete_flag, category_ids, created_user_id, created_at, updated_at, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
     private final String SELECT_ALL_POSTS = "SELECT * FROM post where delete_flag = 0";
     private final String SELECT_POST_BY_ID = "SELECT * FROM post WHERE id = ? and delete_flag = 0";
-    private final String UPDATE_POST_SQL = "UPDATE post SET title = ?, content = ?, updated_at=? WHERE id = ?";
+    private final String UPDATE_POST_SQL = "UPDATE post SET title = ?, content = ?, category_ids = ?,  updated_at=? WHERE id = ?";
     private final String DELETE_POST_SQL = "UPDATE post SET delete_flag=?, deleted_at=? WHERE id = ?";
 
     public PostDaoImpl() {
@@ -32,10 +32,11 @@ public class PostDaoImpl implements PostDao {
             statement.setString(1, post.getTitle());
             statement.setString(2, post.getContent());
             statement.setInt(3, 0);
-            statement.setInt(4, 100);
-            statement.setDate(5, new Date(System.currentTimeMillis()));
-            statement.setDate(6, null);
+            statement.setString(4, post.getCategoryIds());
+            statement.setInt(5, 100);
+            statement.setDate(6, new Date(System.currentTimeMillis()));
             statement.setDate(7, null);
+            statement.setDate(8, null);
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -51,7 +52,7 @@ public class PostDaoImpl implements PostDao {
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_POSTS);
             while (resultSet.next()) {
                 posts.add(new Post(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getString("content"),
-                        resultSet.getDate("created_at")));
+                        resultSet.getString("category_ids"), resultSet.getDate("created_at")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -68,7 +69,7 @@ public class PostDaoImpl implements PostDao {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return new Post(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getString("content"),
-                        resultSet.getDate("created_at"));
+                        resultSet.getString("category_ids"), resultSet.getDate("created_at"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -83,8 +84,9 @@ public class PostDaoImpl implements PostDao {
             statement = connection.prepareStatement(UPDATE_POST_SQL);
             statement.setString(1, post.getTitle());
             statement.setString(2, post.getContent());
-            statement.setDate(3, new Date(System.currentTimeMillis()));
-            statement.setInt(4, post.getId());
+            statement.setString(3, post.getCategoryIds());
+            statement.setDate(4, new Date(System.currentTimeMillis()));
+            statement.setInt(5, post.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -10,22 +10,25 @@ public class PostDTO {
     private String content;
     private boolean deleteFlag;
     private Date createdUserId;
+    private String categoryIds;
     private Date createdAt;
     private Date updatedAt;
 
     public PostDTO() {
     }
 
-    public PostDTO(int id, String title, String content) {
+    public PostDTO(int id, String title, String content, String categoryIds) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.categoryIds = categoryIds;
     }
 
     public PostDTO(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
+        this.categoryIds = post.getCategoryIds();
         this.createdAt = post.getCreatedAt();
     }
 
@@ -84,4 +87,13 @@ public class PostDTO {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public String getCategoryIds() {
+        return categoryIds;
+    }
+
+    public void setCategoryIds(String categoryIds) {
+        this.categoryIds = categoryIds;
+    }
+
 }

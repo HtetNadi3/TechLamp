@@ -1,71 +1,64 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
   pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
+  uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ include file="/jsp/common/header.jsp"%>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Post ${type == 'edit' ? 'Edit ' : 'Registration'}</title>
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
-    <style>
-        /* Make card flexible */
-        .card {
-            width: 100%;
-            max-width: 800px; /* Set a maximum width for larger screens */
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Make editor container resizable */
-        #editor-container {
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            min-height: 200px;
-            resize: horizontal;
-            overflow: auto;
-            flex-grow: 1;
-        }
-    </style>
+<title>Post ${type == 'edit' ? 'Edit ' : 'Registration'}</title>
 </head>
 <body class="d-flex flex-column vh-100">
-    <div class="container-fluid flex-grow-1 d-flex align-items-center justify-content-center">
-        <div class="card">
-            <div class="card-header text-center">
-                <h2 class="my-0">${type == 'edit' ? 'Edit ' : 'Add New '}Post</h2>
-            </div>
-            <div class="card-body">
-                <form id="postForm"
-                    action="${pageContext.request.contextPath}/post/${type == 'edit' ? 'update' : 'insert'}"
-                    method="post">
+  <div
+    class="container-fluid flex-grow-1 d-flex align-items-center justify-content-center">
+    <div class="card">
+      <div class="card-header text-center">
+        <h2 class="my-0">${type == 'edit' ? 'Edit ' : 'Add New '}Post</h2>
+      </div>
+      <div class="card-body">
+        <form id="postForm"
+          action="${pageContext.request.contextPath}/post/${type == 'edit' ? 'update' : 'insert'}"
+          method="post">
 
-                    <c:if test="${type == 'edit'}">
-                        <input type="hidden" name="id" value="${post.id}" />
-                    </c:if>
+          <c:if test="${type == 'edit'}">
+            <input type="hidden" name="id" value="${post.id}" />
+          </c:if>
 
-                    <div class="mb-3 align-items-center">
-                        <label class="fw-medium required" for="title">Title</label>
-                        <input type="text" value="${post.title}"
-                            class="form-control" name="title" id="title" required><span
-                            class="text-danger">${err}</span>
-                    </div>
+          <div class="mb-3 align-items-center">
+            <label class="fw-medium required" for="title">Title</label>
+            <input type="text" value="${post.title}"
+              class="form-control" name="title" id="title" required><span
+              class="text-danger">${err}</span>
+          </div>
 
-                    <div class="mb-3 align-items-center">
-                        <label class="fw-medium required" for="content">Content</label>
-                        <div id="editor-container"></div>
-                        <textarea id="content" class="formcontrol" name="content" rows="5"
-                            style="display: none">${post.content}</textarea>
-                    </div>
+          <div class="mb-3 align-items-center">
+            <label class="fw-medium required" for="content">Content</label>
+            <div id="editor-container"></div>
+            <textarea id="content" class="formcontrol" name="content"
+              rows="5" style="display: none">${post.content}</textarea>
+          </div>
 
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary mx-2">${type == 'edit' ? 'Update' : 'Add'}</button>
-                        <a href="${pageContext.request.contextPath}/post/list"
-                            class="btn btn-dark mx-2">Back</a>
-                    </div>
+          <div class="mb-3 align-items-center">
+            <label class="fw-medium required" for="categories">Categories</label>
+            <select name="categories[]" id="categories" multiple>
+              <c:forEach var="category" items="${categories}">
+                <option value="${category.id}"
+                  <c:if test="${fn:contains(post.categoryIds, category.id)}">selected</c:if>>
+                  ${category.name}</option>
+              </c:forEach>
+            </select>
+          </div>
 
-                </form>
-            </div>
-        </div>
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary mx-2">${type == 'edit' ? 'Update' : 'Add'}</button>
+            <a href="${pageContext.request.contextPath}/post/list"
+              class="btn btn-dark mx-2">Back</a>
+          </div>
+
+        </form>
+      </div>
     </div>
-    <%@ include file="/jsp/common/footer.jsp"%>
+  </div>
+  <%@ include file="/jsp/common/footer.jsp"%>
 </body>
 </html>

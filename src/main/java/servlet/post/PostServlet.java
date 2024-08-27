@@ -2,6 +2,7 @@ package servlet.post;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -11,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dto.post.PostDTO;
+import service.category.CategoryService;
+import service.category.CategoryServiceImpl;
 import service.post.PostService;
 import service.post.PostServiceImpl;
 import util.Route;
@@ -19,10 +22,12 @@ import util.Route;
 public class PostServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final PostService postService;
+    private final CategoryService categoryService;
 
     public PostServlet() {
         super();
         this.postService = new PostServiceImpl();
+        this.categoryService = new CategoryServiceImpl();
     }
 
     @Override
@@ -32,6 +37,7 @@ public class PostServlet extends HttpServlet {
         try {
             switch (action) {
             case "/new":
+                request.setAttribute("categories", categoryService.doGetAllCategories());
                 Route.forwardToPage(Route.POST_INSERT_UPDATE_JSP, request, response);
                 break;
             case "/insert":
@@ -85,6 +91,7 @@ public class PostServlet extends HttpServlet {
         int postId = Integer.parseInt(request.getParameter("id"));
         PostDTO post = postService.doGetPostById(postId);
         request.setAttribute("post", post);
+        request.setAttribute("categories", categoryService.doGetAllCategories());
         request.setAttribute("type", "edit");
         Route.forwardToPage(Route.POST_INSERT_UPDATE_JSP, request, response);
     }
@@ -115,6 +122,7 @@ public class PostServlet extends HttpServlet {
         int id = (idParam != null && !idParam.isEmpty()) ? Integer.parseInt(idParam) : 0;
         String title = request.getParameter("title");
         String content = request.getParameter("content");
-        return new PostDTO(id, title, content);
+        String[] categories = request.getParameterValues("categories[]");
+        return new PostDTO(id, title, content, Arrays.toString(categories));
     }
 }

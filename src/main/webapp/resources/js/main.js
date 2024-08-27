@@ -29,7 +29,6 @@ $(document).ready(function() {
 	}
 
 	var isFullPreview = $('#isFullPreview').val();
-	console.log(isFullPreview)
 	if (isFullPreview) {
 		$('img').addClass('pointer');
 		$('img').on('click', function() {
@@ -44,6 +43,16 @@ $(document).ready(function() {
 			});
 		});
 	}
+
+	new TomSelect('#categories', {
+		placeholder: 'Select or type categories...',
+		plugins: ['remove_button'],
+		onItemAdd: function() {
+			this.control_input.value = '';
+			this.control_input.blur();
+			this.control_input.focus();
+		}
+	});
 
 	document.addEventListener("DOMContentLoaded", function() {
 		document.querySelectorAll('.post-item').forEach(function(postItem) {

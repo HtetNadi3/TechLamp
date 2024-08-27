@@ -17,6 +17,9 @@
 <link
   href="${pageContext.request.contextPath}/resources/css/library/quill.snow.css"
   rel="stylesheet" />
+<link
+  href="${pageContext.request.contextPath}/resources/css/library/tom-select.css"
+  rel="stylesheet" />
 <script
   src="${pageContext.request.contextPath}/resources/js/library/bootstrap.bundle.min.js"
   type="text/javascript"></script>
@@ -25,6 +28,9 @@
   type="text/javascript"></script>
 <script
   src="${pageContext.request.contextPath}/resources/js/library/quill.js"
+  type="text/javascript"></script>
+<script
+  src="${pageContext.request.contextPath}/resources/js/library/tom-select.js"
   type="text/javascript"></script>
 <script src="${pageContext.request.contextPath}/resources/js/main.js"
   type="text/javascript"></script>
