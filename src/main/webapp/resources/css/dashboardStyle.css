@@ -1,0 +1,139 @@
+@charset "ISO-8859-1";
+
+
+body {
+  background-image: linear-gradient(to right, #a8bff7, #9eb2d4, #b3eaf8);
+  color: #3f4040;
+  font-family: 'poppin', sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  padding-top: 20px;
+}
+
+/* Common Glassmorphism Class */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border: none;
+  color: #3f4040;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.glass:hover {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* Sidebar */
+.sidebar {
+  padding: 20px;
+  height: 100vh;
+}
+
+.sidebar-header h4 {
+  color: #3f4040;
+}
+
+.nav-link {
+  color: #3f4040;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.nav-link.active {
+  color: #3f4040;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+/* Buttons */
+.btn.glass {
+  background: linear-gradient(135deg, #1fd1f9, #b621fe);
+  border-radius: 10px;
+  border: none;
+  color: #3f4040;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+  padding: 10px 20px;
+}
+
+.btn.glass:hover {
+  background: linear-gradient(135deg, #1fd1f9, #b621fe);
+  opacity: 0.85;
+}
+
+/* Cards */
+.card.glass {
+  text-align: center;
+}
+
+/* Specific Text Colors for Card Icons */
+.card i {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.card .fa-blog {
+  color: rgb(62, 246, 74);
+}
+
+.card .fa-users {
+  color: rgb(68, 99, 241);
+}
+
+.card .fa-layer-group {
+  color: rgb(237, 166, 79);
+}
+
+/* Table-specific glassmorphism */
+.table-container {
+  margin-bottom: 30px;
+}
+
+.t {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+}
+
+.t.glass {
+  overflow: hidden;
+}
+/* Table-specific glassmorphism style */
+.table-responsive .t {
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #3f4040; /* Text color */
+}
+
+.table-responsive .t thead th {
+  background: rgba(255, 255, 255, 0.25); /* Slightly more opaque for header */
+  color: #3f4040; /* Header text color */
+  font-weight: bold;
+  padding: 0.75rem;
+}
+
+.table-responsive .t tbody tr {
+  transition: background 0.3s ease;
+}
+
+.table-responsive .t tbody tr:hover {
+  background: rgba(255, 255, 255, 0.15); /* Slight change on hover for glass effect */
+}
+
+.table-responsive .t td {
+  padding: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}

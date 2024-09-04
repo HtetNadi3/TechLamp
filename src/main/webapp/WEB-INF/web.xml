@@ -9,4 +9,22 @@
     <welcome-file>default.jsp</welcome-file>
     <welcome-file>default.htm</welcome-file>
   </welcome-file-list>
+<<<<<<< Updated upstream
+=======
+  
+    <servlet>
+        <servlet-name>TechLamp</servlet-name>
+        <servlet-class>TechLamp</servlet-class> 
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>TechLamp</servlet-name>
+        <url-pattern>/TechLamp</url-pattern> 
+    </servlet-mapping>
+  
+   <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/resources/*</url-pattern>
+    </servlet-mapping>
+>>>>>>> Stashed changes
 </web-app>
