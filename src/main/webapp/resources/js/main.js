@@ -12,8 +12,13 @@ $(document).ready(function() {
 	var quill = new Quill('#editor-container', {
 		theme: 'snow',
 		modules: {
-			toolbar: [['bold', 'italic', 'underline'],
-			['link', 'image']]
+			toolbar: [
+				['bold', 'italic', 'underline', 'strike'],
+				[{ 'size': ['small', false, 'large', 'huge'] }],
+				['code-block', 'link', 'image'],
+				[{ 'color': [] }, { 'background': [] }],
+				[{ 'align': [] }]
+			]
 		}
 	});
 

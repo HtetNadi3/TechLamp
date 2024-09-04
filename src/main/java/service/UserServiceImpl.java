@@ -18,7 +18,9 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setUsername(userDTO.getUsername());
         user.setPassword(hashedPassword);
+        user.setEmail(userDTO.getEmail());
         user.setRole(userDTO.getRole());
+        user.setCreated_date(userDTO.getCreated_date());
         userDAO.saveUser(user);
     }
 
@@ -52,7 +54,9 @@ public class UserServiceImpl implements UserService {
                 String hashedPassword = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt());
                 user.setPassword(hashedPassword);
             }
+            user.setEmail(userDTO.getEmail());
             user.setRole(userDTO.getRole());
+            user.setCreated_date(userDTO.getCreated_date());
             userDAO.updateUser(user);
         }
     }
@@ -63,6 +67,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserDTO convertToDTO(User user) {
-        return new UserDTO(user.getId(), user.getUsername(), user.getPassword(), user.getRole());
+        return new UserDTO(user.getId(), user.getUsername(), user.getPassword(),user.getEmail(), user.getRole(), user.getCreated_date());
     }
 }

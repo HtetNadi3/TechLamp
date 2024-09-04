@@ -1,5 +1,7 @@
 package auth;
 
+import java.util.Date;
+
 import org.mindrot.jbcrypt.BCrypt;
 import dao.UserDAO;
 import entity.User;
@@ -11,7 +13,7 @@ public class AuthService {
         this.userDAO = userDAO;
     }
 
-    public boolean register(String username, String password) {
+    public boolean register(String username, String email, String password, Date created_date) {
         if (userDAO.findByUsername(username) != null) {
             return false; 
         }
@@ -19,8 +21,10 @@ public class AuthService {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         User user = new User();
         user.setUsername(username);
+        user.setEmail(email);
         user.setPassword(hashedPassword);
         user.setRole("USER");
+        user.setCreated_date(created_date);
         return userDAO.saveUser(user);
     }
 
