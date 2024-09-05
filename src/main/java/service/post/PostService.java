@@ -14,4 +14,6 @@ public interface PostService {
     void doUpdatePost(PostDTO postDto);
 
     void doDeletePost(int id);
+
+    boolean isCommented(int userId);
 }

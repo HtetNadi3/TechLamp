@@ -9,7 +9,7 @@ public class Post {
     private String title;
     private String content;
     private boolean deleteFlag;
-    private Date createdUserId;
+    private int createdUserId;
     private String categoryIds;
     private Date createdAt;
     private Date updatedAt;
@@ -18,12 +18,13 @@ public class Post {
     public Post() {
     }
 
-    public Post(int id, String title, String content, String categoryIds, Date createdAt) {
+    public Post(int id, String title, String content, String categoryIds, Date createdAt, int createdUserId) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.categoryIds = categoryIds;
         this.createdAt = createdAt;
+        this.createdUserId = createdUserId;
     }
 
     public Post(PostDTO postDto) {
@@ -66,11 +67,11 @@ public class Post {
         this.deleteFlag = deleteFlag;
     }
 
-    public Date getCreatedUserId() {
+    public int getCreatedUserId() {
         return createdUserId;
     }
 
-    public void setCreated_user_id(Date createdUserId) {
+    public void setCreatedUserId(int createdUserId) {
         this.createdUserId = createdUserId;
     }
 

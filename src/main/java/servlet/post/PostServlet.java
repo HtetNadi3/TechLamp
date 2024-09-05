@@ -58,6 +58,12 @@ public class PostServlet extends HttpServlet {
             case "/detail":
                 detailPost(request, response);
                 break;
+            case "/newComment":
+                int postId = Integer.parseInt(request.getParameter("id"));
+                PostDTO post = postService.doGetPostById(postId);
+                request.setAttribute("post", post);
+                Route.forwardToPage(Route.COMMENT_INSERT_UPDATE_JSP, request, response);
+                break;
             default:
                 break;
             }

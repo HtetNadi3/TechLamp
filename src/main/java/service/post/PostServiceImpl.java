@@ -3,6 +3,8 @@ package service.post;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import dao.comment.CommentDao;
+import dao.comment.CommentDaoImpl;
 import dao.post.PostDao;
 import dao.post.PostDaoImpl;
 import dto.post.PostDTO;
@@ -10,6 +12,7 @@ import entity.post.Post;
 
 public class PostServiceImpl implements PostService {
     private PostDao postDao = new PostDaoImpl();
+    private CommentDao commentDao = new CommentDaoImpl();
 
     @Override
     public void doInsertPost(PostDTO postDto) {
@@ -19,7 +22,9 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDTO> doGetAllPosts() {
         return postDao.dbGetAllPosts().stream().map(post -> {
-            return new PostDTO(post);
+            PostDTO postDto = new PostDTO(post);
+            postDto.setIsCommented(commentDao.isCommented(post.getCreatedUserId()));
+            return postDto;
         }).collect(Collectors.toList());
     }
 
@@ -36,5 +41,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public void doDeletePost(int id) {
         postDao.dbDeletePost(id);
+    }
+
+    @Override
+    public boolean isCommented(int userId) {
+        return commentDao.isCommented(userId);
     }
 }

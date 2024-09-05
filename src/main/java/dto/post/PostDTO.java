@@ -9,10 +9,11 @@ public class PostDTO {
     private String title;
     private String content;
     private boolean deleteFlag;
-    private Date createdUserId;
+    private int createdUserId;
     private String categoryIds;
     private Date createdAt;
     private Date updatedAt;
+    private boolean isCommented;
 
     public PostDTO() {
     }
@@ -30,6 +31,7 @@ public class PostDTO {
         this.content = post.getContent();
         this.categoryIds = post.getCategoryIds();
         this.createdAt = post.getCreatedAt();
+        this.createdUserId = post.getCreatedUserId();
     }
 
     public int getId() {
@@ -64,11 +66,11 @@ public class PostDTO {
         this.deleteFlag = deleteFlag;
     }
 
-    public Date getCreatedUserId() {
+    public int getCreatedUserId() {
         return createdUserId;
     }
 
-    public void setCreated_user_id(Date createdUserId) {
+    public void setCreatedUserId(int createdUserId) {
         this.createdUserId = createdUserId;
     }
 
@@ -94,6 +96,14 @@ public class PostDTO {
 
     public void setCategoryIds(String categoryIds) {
         this.categoryIds = categoryIds;
+    }
+
+    public boolean getIsCommented() {
+        return isCommented;
+    }
+
+    public void setIsCommented(boolean isCommented) {
+        this.isCommented = isCommented;
     }
 
 }

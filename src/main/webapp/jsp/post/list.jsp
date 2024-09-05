@@ -53,6 +53,12 @@
                   <td class="text-truncate">Leo</td>
                   <td>${post.createdAt}</td>
                   <td class="d-flex justify-content-center"><a
+                    href="${pageContext.request.contextPath}/comment/list?postId=${post.id}"
+                    class="btn btn-success mx-3">View Comment</a>
+                    <c:if test="${!post.isCommented}"><a
+                    href="${pageContext.request.contextPath}/comment/new?postId=${post.id}"
+                    class="btn btn-success mx-3">Add Comment</a></c:if>
+                    <a
                     href="edit?id=${post.id}"
                     class="btn mx-3 btn-primary"><i
                       class="fa-solid fa-pen-to-square"></i></a>

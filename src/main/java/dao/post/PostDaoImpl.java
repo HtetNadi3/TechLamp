@@ -52,7 +52,8 @@ public class PostDaoImpl implements PostDao {
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_POSTS);
             while (resultSet.next()) {
                 posts.add(new Post(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getString("content"),
-                        resultSet.getString("category_ids"), resultSet.getDate("created_at")));
+                        resultSet.getString("category_ids"), resultSet.getDate("created_at"),
+                        resultSet.getInt("created_user_id")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -69,7 +70,8 @@ public class PostDaoImpl implements PostDao {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return new Post(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getString("content"),
-                        resultSet.getString("category_ids"), resultSet.getDate("created_at"));
+                        resultSet.getString("category_ids"), resultSet.getDate("created_at"),
+                        resultSet.getInt("created_user_id"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

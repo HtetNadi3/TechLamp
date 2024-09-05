@@ -13,6 +13,8 @@ public class Route {
     public static final String POST_DETAIL_JSP = "/jsp/post/detail.jsp";
     public static final String CATEGORY_INSERT_UPDATE_JSP = "/jsp/category/insert_update.jsp";
     public static final String CATEGORY_LIST_JSP = "/jsp/category/list.jsp";
+    public static final String COMMENT_INSERT_UPDATE_JSP = "/jsp/comment/insert_update.jsp";
+    public static final String COMMENT_LIST_JSP = "/jsp/comment/list.jsp";
 
     public static void forwardToPage(String page, HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
