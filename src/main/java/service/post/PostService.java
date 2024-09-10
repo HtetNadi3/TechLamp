@@ -14,5 +14,7 @@ public interface PostService {
     void doUpdatePost(PostDTO postDto);
 
     void doDeletePost(int id);
+
+	List<PostDTO> doSearchPostsByTitle(String title);
     
 }

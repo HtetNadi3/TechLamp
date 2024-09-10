@@ -1,7 +1,17 @@
 package service;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
+
 import org.mindrot.jbcrypt.BCrypt;
 import dao.UserDAO;
 import dao.UserDAOImpl;
@@ -57,6 +67,10 @@ public class UserServiceImpl implements UserService {
             user.setEmail(userDTO.getEmail());
             user.setRole(userDTO.getRole());
             user.setCreated_date(userDTO.getCreated_date());
+            user.setPhone_number(userDTO.getPhone_number());
+            user.setBio(userDTO.getBio());
+            user.setOccupation(userDTO.getOccupation());
+            user.setProfile_img(userDTO.getProfile_img());
             userDAO.updateUser(user);
         }
     }
@@ -69,4 +83,21 @@ public class UserServiceImpl implements UserService {
     private UserDTO convertToDTO(User user) {
         return new UserDTO(user.getId(), user.getUsername(), user.getPassword(),user.getEmail(), user.getRole(), user.getCreated_date());
     }
+   
+    @Override
+    public String saveFile(Part profileImagePart, HttpServletRequest request) throws IOException {
+        String fileName = Paths.get(profileImagePart.getSubmittedFileName()).getFileName().toString();
+        String uploadDir = request.getServletContext().getRealPath("/uploads");
+        File uploadDirectory = new File(uploadDir);
+        if (!uploadDirectory.exists()) {
+            uploadDirectory.mkdirs();
+        }
+        File file = new File(uploadDirectory, fileName);
+        try (InputStream input = profileImagePart.getInputStream()) {
+            Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
+        return "/uploads/" + fileName;
+    }
+
+
 }

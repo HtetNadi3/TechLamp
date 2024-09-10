@@ -1,7 +1,6 @@
 package dto.post;
 
 import java.util.Date;
-
 import entity.Post;
 
 public class PostDTO {
@@ -10,12 +9,13 @@ public class PostDTO {
     private String content;
     private boolean deleteFlag;
     private int createdUserId;
+    private int categoryId;
     private Date createdAt;
     private Date updatedAt;
     private String author;
+    private String categoryName;
 
-    public PostDTO() {
-    }
+    public PostDTO() {}
 
     public PostDTO(int id, String title, String content) {
         this.id = id;
@@ -27,7 +27,7 @@ public class PostDTO {
         this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
-        this.author = null;
+        this.categoryId = post.getCategoryId();
         this.createdAt = post.getCreatedAt();
     }
 
@@ -38,26 +38,23 @@ public class PostDTO {
         this.author = author;
         this.createdAt = createdAt;
     }
-    
-    
 
     public PostDTO(int id, String title, String content, int createdUserId) {
-		this.id = id;
-		this.title = title;
-		this.content = content;
-		this.createdUserId = createdUserId;
-	}
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.createdUserId = createdUserId;
+    }
 
-	public PostDTO(int id, String title, String content, int createdUserId, Date createdAt) {
-		this.id = id;
-		this.title = title;
-		this.content = content;
-		this.createdUserId = createdUserId;
-		this.createdAt = createdAt;
-		
-	}
+    public PostDTO(int id, String title, String content, int createdUserId,int categoryId) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.createdUserId = createdUserId;
+        this.categoryId = categoryId;
+    }
 
-	public int getId() {
+    public int getId() {
         return id;
     }
 
@@ -93,7 +90,7 @@ public class PostDTO {
         return createdUserId;
     }
 
-    public void setCreated_user_id(int createdUserId) {
+    public void setCreatedUserId(int createdUserId) {
         this.createdUserId = createdUserId;
     }
 
@@ -101,7 +98,7 @@ public class PostDTO {
         return createdAt;
     }
 
-    public void setCreated_at(Date createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -113,11 +110,27 @@ public class PostDTO {
         this.updatedAt = updatedAt;
     }
 
-	public String getAuthor() {
-		return author;
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+	public String getCategoryName() {
+		return categoryName;
 	}
 
-	public void setAuthor(String author) {
-		this.author = author;
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
 	}
 }

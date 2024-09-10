@@ -11,7 +11,7 @@
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
 <link href="${pageContext.request.contextPath}/resources/css/style.css"
-	rel="stylesheet" />
+	rel="stylesheet"/>
 	
 <link
 	href="${pageContext.request.contextPath}/resources/css/library/bootstrap.min.css"
@@ -23,6 +23,13 @@
 
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+	
+<link
+  href="${pageContext.request.contextPath}/resources/css/library/tom-select.css"
+  rel="stylesheet" />
+  <script
+  src="${pageContext.request.contextPath}/resources/js/library/tom-select.js"
+  type="text/javascript"></script>
 <script
 	src="${pageContext.request.contextPath}/resources/js/library/bootstrap.bundle.min.js"
 	type="text/javascript"></script>

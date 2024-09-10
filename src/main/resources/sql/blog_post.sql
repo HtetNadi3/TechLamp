@@ -8,6 +8,7 @@ CREATE TABLE `post` (
   `content` longtext,
   `delete_flag` tinyint DEFAULT NULL,
   `created_user_id` int DEFAULT NULL,
+  `category_id` int DEFAULT NULL,
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` timestamp DEFAULT CURRENT_TIMESTAMP,

@@ -83,7 +83,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public boolean updateUser(User user) {
-        String sql = "UPDATE users SET username = ?, password = ?,email = ?, role = ? WHERE id = ?";
+        String sql = "UPDATE users SET username = ?, password = ?,email = ?, role = ?, phone_number = ?, bio= ?, occupation = ?, profile_img = ? WHERE id = ?";
         try (Connection connection = DatabaseConnection.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
              
@@ -91,7 +91,11 @@ public class UserDAOImpl implements UserDAO {
             statement.setString(2, user.getPassword());
             statement.setString(3, user.getEmail());
             statement.setString(4, user.getRole());
-            statement.setInt(5, user.getId());
+            statement.setString(5, user.getPhone_number());
+            statement.setString(6, user.getBio());
+            statement.setString(7, user.getOccupation());
+            statement.setString(8, user.getProfile_img());
+            statement.setInt(9, user.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -121,6 +125,10 @@ public class UserDAOImpl implements UserDAO {
         user.setEmail(resultSet.getString("email"));
         user.setRole(resultSet.getString("role"));
         user.setCreated_date(resultSet.getTimestamp("created_date"));
+        user.setPhone_number(resultSet.getString("phone_number"));
+        user.setBio(resultSet.getString("bio"));
+        user.setOccupation(resultSet.getString("occupation"));
+        user.setPhone_number(resultSet.getString("profile_img"));
         return user;
     }
 }

@@ -149,22 +149,12 @@
 						</thead>
 						<tbody>
 							<!-- Example Category Rows -->
+							<c:forEach var = "category" items = "${categories}">
 							<tr>
-								<td>Java</td>
+								<td>${category.name}</td>
 								<td>50</td>
 							</tr>
-							<tr>
-								<td>Web Development</td>
-								<td>120</td>
-							</tr>
-							<tr>
-								<td>Web Development</td>
-								<td>120</td>
-							</tr>
-							<tr>
-								<td>Web Development</td>
-								<td>120</td>
-							</tr>
+							</c:forEach>
 						</tbody>
 					</table>
 				</div>

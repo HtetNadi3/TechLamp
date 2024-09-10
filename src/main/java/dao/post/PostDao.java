@@ -16,4 +16,6 @@ public interface PostDao {
     void dbDeletePost(int id);
     
     String dbFindAuthorByPostId(int postId);
+
+	List<Post> dbSearchPostsByTitle(String title);
 }
