@@ -1,7 +1,9 @@
 package dao.post;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import dto.post.PostDTO;
 import entity.Post;
 
 public interface PostDao {
@@ -18,4 +20,16 @@ public interface PostDao {
     String dbFindAuthorByPostId(int postId);
 
 	List<Post> dbSearchPostsByTitle(String title);
+
+	int getPostCount() throws SQLException;
+
+	int getPostCountByCategory(int categoryId) throws SQLException;
+
+	int getPostCountByUser(int userId) throws SQLException;
+
+	List<Post> getRecentPosts(int limit) throws SQLException;
+
+	List<Post> dbGetPostsByCategoryId(int categoryId);
+
+	List<Post> findPostsByTitleAndCategory(String searchTitle, int categoryId);
 }

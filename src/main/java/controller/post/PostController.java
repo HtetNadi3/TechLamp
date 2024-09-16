@@ -2,7 +2,9 @@ package controller.post;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +17,7 @@ import dto.UserDTO;
 import dto.post.PostDTO;
 import service.UserServiceImpl;
 import service.category.CategoryServiceImpl;
+import service.comment.CommentServiceImpl;
 import service.post.PostService;
 import service.post.PostServiceImpl;
 import util.Route;
@@ -25,12 +28,14 @@ public class PostController extends HttpServlet {
 	private final PostService postService;
 	private final CategoryServiceImpl categoryService;
 	private final UserServiceImpl userService;
+	private final CommentServiceImpl commentService;
 
 	public PostController() {
 		super();
 		this.postService = new PostServiceImpl();
 		this.categoryService = new CategoryServiceImpl();
 		this.userService = new UserServiceImpl();
+		this.commentService = new CommentServiceImpl();
 	}
 
 	@Override
@@ -74,6 +79,7 @@ public class PostController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		
 		doGet(request, response);
 	}
 
@@ -86,22 +92,46 @@ public class PostController extends HttpServlet {
 	}
 
 	private void listPosts(HttpServletRequest request, HttpServletResponse response, boolean isSearch)
-			throws Exception {
-		String searchTitle = request.getParameter("searchTitle");
-		List<PostDTO> posts;
-		List<UserDTO> users;
-		if (searchTitle == null || searchTitle.trim().isEmpty()) {
-			posts = postService.doGetAllPosts();
+	        throws Exception {
 
-		} else {
-			posts = postService.doSearchPostsByTitle(searchTitle);
-		}
+	    String searchTitle = request.getParameter("searchTitle");
+	    String categoryIdStr = request.getParameter("categoryId");
 
-		users = userService.getAllUsers();
-		request.setAttribute("postList", posts);
-		request.setAttribute("users", users);
-		Route.forwardToPage(Route.POST_LIST_JSP, request, response);
+	    List<PostDTO> posts;
+
+	    if (searchTitle != null && !searchTitle.trim().isEmpty() && categoryIdStr != null && !categoryIdStr.isEmpty()) {
+	        int categoryId = Integer.parseInt(categoryIdStr);
+	        posts = postService.searchPostsByTitleAndCategory(searchTitle, categoryId);
+
+	    } else if (categoryIdStr != null && !categoryIdStr.isEmpty()) { 
+	        int categoryId = Integer.parseInt(categoryIdStr);
+	        posts = postService.getPostsByCategoryId(categoryId);
+
+	    } else if (searchTitle != null && !searchTitle.trim().isEmpty()) {
+	        posts = postService.doSearchPostsByTitle(searchTitle);
+
+	    } else { 
+	        posts = postService.doGetAllPosts();
+	    }
+
+	    List<UserDTO> users = userService.getAllUsers();
+
+	    Map<Integer, Integer> commentCounts = new HashMap<>();
+	    for (PostDTO post : posts) {
+	        int commentCount = commentService.getCommentCountByPostId(post.getId());
+	        commentCounts.put(post.getId(), commentCount);
+	    }
+
+	    request.setAttribute("postList", posts);
+	    request.setAttribute("users", users);
+	    request.setAttribute("commentCounts", commentCounts);
+	    
+	    request.setAttribute("categories", categoryService.doGetAllCategories());
+
+	    Route.forwardToPage(Route.POST_LIST_JSP, request, response);
 	}
+
+
 
 	private void showEditForm(HttpServletRequest request, HttpServletResponse response)
 			throws SQLException, ServletException, IOException {
@@ -144,7 +174,9 @@ public class PostController extends HttpServlet {
 		int createdUserId = (int) session.getAttribute("userId");
 
 		int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+		
+		int commentCount = commentService.getCommentCountByPostId(id);
 
-		return new PostDTO(id, title, content, createdUserId, categoryId);
+		return new PostDTO(id, title, content, createdUserId, categoryId, commentCount);
 	}
 }

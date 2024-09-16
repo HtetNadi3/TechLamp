@@ -27,6 +27,7 @@ public class PostDTO {
         this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
+        this.createdUserId = post.getCreatedUserId();
         this.categoryId = post.getCategoryId();
         this.createdAt = post.getCreatedAt();
     }
@@ -46,7 +47,7 @@ public class PostDTO {
         this.createdUserId = createdUserId;
     }
 
-    public PostDTO(int id, String title, String content, int createdUserId,int categoryId) {
+    public PostDTO(int id, String title, String content, int createdUserId,int categoryId, int commentCount) {
         this.id = id;
         this.title = title;
         this.content = content;

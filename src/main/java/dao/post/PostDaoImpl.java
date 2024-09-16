@@ -22,6 +22,13 @@ public class PostDaoImpl implements PostDao {
     private final String DELETE_POST_SQL = "UPDATE post SET delete_flag=?, deleted_at=? WHERE id = ?";
     private final String AUTHOR = "SELECT u.username as username FROM post as p JOIN users as u ON p.created_user_id = u.id WHERE p.id = ?";
     private final String SEARCH_POST_BY_TITLE = "SELECT * FROM post WHERE title LIKE ?";
+    private final String POST_COUNT = "SELECT COUNT(*) FROM post";
+    private final String POST_COUNT_BY_CATEGORY = "SELECT COUNT(*) FROM post WHERE category_id = ?";
+    private static final String GET_POST_COUNT_BY_USERID = "SELECT COUNT(*) FROM post WHERE created_user_id = ?";
+    private final String RECENT_POSTS = "SELECT * FROM post ORDER BY created_at DESC LIMIT ?";
+    private final String POSTS_BY_CATEGORY =  "SELECT * FROM post WHERE category_id = ? AND delete_flag = 0";
+    private final String  FindPostsByTitleAndCategory = "SELECT * FROM post WHERE title LIKE ? AND category_id = ? AND delete_flag = 0";
+
 
     public PostDaoImpl() {
         this.connection = DatabaseConnection.getInstance().getConnection();
@@ -150,5 +157,136 @@ public class PostDaoImpl implements PostDao {
         }
         return posts;
     }
+    
+    @Override
+    public int getPostCount() throws SQLException {
+        int count = 0;
+       
+        try ( PreparedStatement ps= connection.prepareStatement(POST_COUNT);
+             ResultSet resultSet = ps.executeQuery()) {
+            
+            if (resultSet.next()) {
+                count = resultSet.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return count;
+    }
+    
+    @Override
+    public int getPostCountByCategory(int categoryId) throws SQLException {
+        int count = 0;
+        
+        try (
+             PreparedStatement preparedStatement = connection.prepareStatement(POST_COUNT_BY_CATEGORY)) {
+            
+            preparedStatement.setInt(1, categoryId);
+            
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    count = resultSet.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return count;
+    }
+    
+    @Override
+    public int getPostCountByUser(int userId) throws SQLException {
+        int postCount = 0;
+        try (
+             PreparedStatement ps = connection.prepareStatement(GET_POST_COUNT_BY_USERID)) {
+            
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    postCount = rs.getInt(1);
+                }
+            }
+        }
+        return postCount;
+    }
+    
+    @Override
+    public List<Post> getRecentPosts(int limit) throws SQLException {
+        List<Post> posts = new ArrayList<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(RECENT_POSTS)) {
+            stmt.setInt(1, limit);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    posts.add(new Post(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getInt("created_user_id"),
+                        rs.getInt("category_id"),
+                        rs.getDate("created_at")
+                    ));
+                }
+            }
+        }
+        return posts;
+    }
+
+
+    @Override
+    public List<Post> dbGetPostsByCategoryId(int categoryId) {
+        List<Post> posts = new ArrayList<>();
+
+
+        try (PreparedStatement statement = connection.prepareStatement(POSTS_BY_CATEGORY)) {
+            statement.setInt(1, categoryId);
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+            	Post post = new Post();
+                post.setId(rs.getInt("id"));
+                post.setTitle(rs.getString("title"));
+                post.setContent(rs.getString("content"));
+                post.setCreated_user_id(rs.getInt("created_user_id"));
+                post.setCategoryId(rs.getInt("category_id"));
+                post.setCreated_at(rs.getDate("created_at"));
+                posts.add(post);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return posts;
+    }
+    
+    @Override
+    public List<Post> findPostsByTitleAndCategory(String title, int categoryId) {
+        List<Post> posts = new ArrayList<>();
+
+        try (PreparedStatement statement = connection.prepareStatement(FindPostsByTitleAndCategory)) {
+            statement.setString(1, "%" + title + "%");
+            statement.setInt(2, categoryId);
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()) {
+            	Post post = new Post();
+                post.setId(rs.getInt("id"));
+                post.setTitle(rs.getString("title"));
+                post.setContent(rs.getString("content"));
+                post.setCreated_user_id(rs.getInt("created_user_id"));
+                post.setCategoryId(rs.getInt("category_id"));
+                post.setCreated_at(rs.getDate("created_at"));
+                posts.add(post);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return posts;
+    }
+
+
+
 
 }

@@ -15,7 +15,7 @@
             </div>
             <div class="card-body">
                 <form id="categoryForm"
-                    action="${pageContext.request.contextPath}/category/${type == 'edit' ? 'update' : 'insert'}"
+                    action="${pageContext.request.contextPath}/dashboard/category/${type == 'edit' ? 'update' : 'insert'}"
                     method="post">
 
                     <c:if test="${type == 'edit'}">
@@ -31,7 +31,7 @@
 
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary mx-2">${type == 'edit' ? 'Update' : 'Add'}</button>
-                        <a href="${pageContext.request.contextPath}/category/list"
+                        <a href="${pageContext.request.contextPath}/dashboard/category/list"
                             class="btn btn-dark mx-2">Back</a>
                     </div>
                 </form>

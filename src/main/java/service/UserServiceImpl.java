@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,21 +39,26 @@ public class UserServiceImpl implements UserService {
     public UserDTO loginUser(String username, String password) throws Exception {
         User user = userDAO.findByUsername(username);
         if (user != null && BCrypt.checkpw(password, user.getPassword())) {
-            return convertToDTO(user);
+            return new UserDTO(user);
         }
         return null;
     }
 
-    @Override
+   
+
+	@Override
     public UserDTO getUserById(int id) throws Exception {
         User user = userDAO.findById(id);
-        return user != null ? convertToDTO(user) : null;
+        return user != null ? new UserDTO(user) : null;
     }
 
     @Override
     public List<UserDTO> getAllUsers() throws Exception {
         List<User> users = userDAO.findAllUsers();
-        return users.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return users.stream().map(user -> {
+        	UserDTO userDTO = new UserDTO(user);
+        	return userDTO;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -80,14 +86,12 @@ public class UserServiceImpl implements UserService {
         userDAO.deleteUser(id);
     }
 
-    private UserDTO convertToDTO(User user) {
-        return new UserDTO(user.getId(), user.getUsername(), user.getPassword(),user.getEmail(), user.getRole(), user.getCreated_date());
-    }
+    
    
     @Override
     public String saveFile(Part profileImagePart, HttpServletRequest request) throws IOException {
         String fileName = Paths.get(profileImagePart.getSubmittedFileName()).getFileName().toString();
-        String uploadDir = request.getServletContext().getRealPath("/uploads");
+        String uploadDir = request.getServletContext().getRealPath("/img");
         File uploadDirectory = new File(uploadDir);
         if (!uploadDirectory.exists()) {
             uploadDirectory.mkdirs();
@@ -96,7 +100,27 @@ public class UserServiceImpl implements UserService {
         try (InputStream input = profileImagePart.getInputStream()) {
             Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
-        return "/uploads/" + fileName;
+        return fileName;
+    }
+
+
+    @Override
+    public int getUserCount() {
+    	return userDAO.getUserCount();
+    }
+    
+    @Override
+    public List<UserDTO> getRecentUsers(int limit) throws SQLException {
+    	List<User> users = userDAO.getRecentUsers(limit);
+        return users.stream().map(user -> {
+        	UserDTO userDTO = new UserDTO(user);
+        	return userDTO;
+        }).collect(Collectors.toList());
+    }
+    
+    @Override
+    public String getUsernameById(int userId) throws SQLException {
+        return userDAO.getUsernameById(userId);
     }
 
 

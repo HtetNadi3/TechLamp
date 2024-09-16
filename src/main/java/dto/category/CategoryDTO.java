@@ -11,6 +11,7 @@ public class CategoryDTO {
     private Date createdUserId;
     private Date createdAt;
     private Date updatedAt;
+    private int postCount;
 
     public CategoryDTO() {
     }
@@ -73,5 +74,13 @@ public class CategoryDTO {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+	public int getPostCount() {
+		return postCount;
+	}
+
+	public void setPostCount(int postCount) {
+		this.postCount = postCount;
+	}
 
 }

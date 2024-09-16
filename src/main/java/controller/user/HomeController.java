@@ -1,9 +1,14 @@
 package controller.user;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,21 +20,28 @@ import auth.AuthService;
 import dao.UserDAO;
 import dao.UserDAOImpl;
 import dto.UserDTO;
+import dto.post.PostDTO;
 import entity.User;
 import service.UserService;
 import service.UserServiceImpl;
+import service.post.PostService;
+import service.post.PostServiceImpl;
+import util.ImagePathUtil;
 import util.Route;
 
-@WebServlet("/")
+@WebServlet({"/register", "/login", "/profile", "/singup", "/signin", "/profile/update"})
+@MultipartConfig
 public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final AuthService authService;
 	private final UserService userservice;
+	private final PostService postService;
 
 	public HomeController() {
 		UserDAO userDAO = new UserDAOImpl();
 		this.authService = new AuthService(userDAO);
 		this.userservice = new UserServiceImpl();
+		this.postService = new PostServiceImpl();
 	}
 
 	@Override
@@ -50,16 +62,27 @@ public class HomeController extends HttpServlet {
 			if (userId != null) {
 				UserDTO user;
 				try {
-					
+					List<PostDTO> postDto = postService.doGetAllPosts().stream()
+						    .filter(post -> post.getCreatedUserId() == userId)
+						    .collect(Collectors.toList());
+
 					user = userservice.getUserById(userId);
+					
+					if(user.getProfile_img() != null) {
+						user.setProfile_img(ImagePathUtil.getImagePath(request, user.getProfile_img()));
+					} else {
+						user.setProfile_img(ImagePathUtil.getImagePath(request));
+					}
+					
 					request.setAttribute("user", user);
+					request.setAttribute("postList", postDto);
 					Route.forwardToPage(Route.USER_PROFILE, request, response);
-					
+
 				} catch (Exception e) {
-					
+
 					e.printStackTrace();
 				}
-				
+
 			} else {
 				response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			}
@@ -104,7 +127,7 @@ public class HomeController extends HttpServlet {
 	private void handleSuccessfulLogin(User user, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		HttpSession session = request.getSession();
-		
+
 		session.setAttribute("username", user.getUsername());
 		session.setAttribute("role", user.getRole());
 		session.setAttribute("userId", user.getId());
@@ -156,52 +179,46 @@ public class HomeController extends HttpServlet {
 	}
 
 	private void updateUserProfile(HttpServletRequest request, HttpServletResponse response) throws Exception {
-	    HttpSession session = request.getSession();
-	    User user = (User) session.getAttribute("user");
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("user");
 
-	    if (user == null) {
-	        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-	        return;
-	    }
+		if (user == null) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
+		} else {
+			Integer userId = user.getId();
+			String username = request.getParameter("username");
+			String password = request.getParameter("password");
+			String email = request.getParameter("email");
+			String phone_number = request.getParameter("phone_number");
+			String bio = request.getParameter("bio");
+			String occupation = request.getParameter("occupation");
+			Part profileImagePart = request.getPart("profile_img");
+			String profileImageName = null;
+			if (profileImagePart != null && profileImagePart.getSize() > 0) {
+				profileImageName = userservice.saveFile(profileImagePart, request);
+			}
 
-	    
-	    Integer userId = user.getId();
+			if (password != null && !password.isEmpty()) {
+				if (password.length() < 8 || !password.matches(".*[A-Z].*") || !password.matches(".*[0-9].*")) {
+					handleError(
+							"Password must be at least 8 characters long and contain an uppercase letter and a number.",
+							Route.USER_PROFILE, request, response);
+					return;
+				}
+			} else {
+				password = null;
+			}
 
-	    String username = request.getParameter("username");
-	    String password = request.getParameter("password");
-	    String email = request.getParameter("email");
-	    String phone_number = request.getParameter("phone_number");
-	    String bio = request.getParameter("bio");
-	    String occupation = request.getParameter("occupation");
-	    Part profileImagePart = request.getPart("profile_img");
-	    String profileImagePath = null;
+			boolean updated = authService.updateProfile(userId, username, email, password, phone_number, bio,
+					occupation, profileImageName);
+			if (updated) {
 
-	    if (profileImagePart != null && profileImagePart.getSize() > 0) {
-	        profileImagePath = userservice.saveFile(profileImagePart, request);
-	    } else {
-	        profileImagePath = user.getProfile_img();
-	    }
-
-	    if (password != null && !password.isEmpty()) {
-	        if (password.length() < 8 || !password.matches(".*[A-Z].*") || !password.matches(".*[0-9].*")) {
-	            handleError("Password must be at least 8 characters long and contain an uppercase letter and a number.",
-	                    Route.USER_PROFILE, request, response);
-	            return;
-	        }
-	    } else {
-	        password = null; 
-	    }
-
-	    boolean updated = authService.updateProfile(userId, username, email, password, phone_number, bio, occupation,
-	            profileImagePath);
-	    if (updated) {
-	        
-	        
-	        Route.redirectToPage("/profile", request, response);
-	    } else {
-	        handleError("Failed to update profile", Route.USER_PROFILE, request, response);
-	    }
+				Route.redirectToPage("/profile", request, response);
+			} else {
+				handleError("Failed to update profile", Route.USER_PROFILE, request, response);
+			}
+		}
 	}
-
 
 }

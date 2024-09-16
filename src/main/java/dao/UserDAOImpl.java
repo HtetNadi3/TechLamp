@@ -116,6 +116,57 @@ public class UserDAOImpl implements UserDAO {
             return false;
         }
     }
+    
+    @Override
+    public int getUserCount() {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM users";
+       
+        try (Connection connection = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql))  {
+            
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+    
+    @Override
+    public List<User> getRecentUsers(int limit) throws SQLException {
+        String query = "SELECT * FROM users ORDER BY created_date DESC LIMIT ?";
+        List<User> users = new ArrayList<>();
+        
+        try (Connection connection = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, limit);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    users.add(mapResultSetToUser(rs));
+                }
+            }
+        }
+        return users;
+    }
+    
+    @Override
+    public String getUsernameById(int userId) throws SQLException {
+        String query = "SELECT username FROM users WHERE id = ?";
+        try (Connection connection = DatabaseConnection.getInstance().getConnection();
+              PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("username");
+            }
+        }
+        return null;
+    }
+
 
     private User mapResultSetToUser(ResultSet resultSet) throws SQLException {
         User user = new User();
@@ -128,7 +179,8 @@ public class UserDAOImpl implements UserDAO {
         user.setPhone_number(resultSet.getString("phone_number"));
         user.setBio(resultSet.getString("bio"));
         user.setOccupation(resultSet.getString("occupation"));
-        user.setPhone_number(resultSet.getString("profile_img"));
+        user.setProfile_img(resultSet.getString("profile_img"));
         return user;
     }
+
 }

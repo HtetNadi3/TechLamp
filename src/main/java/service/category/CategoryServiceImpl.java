@@ -37,4 +37,9 @@ public class CategoryServiceImpl implements CategoryService {
     public void doDeleteCategory(int id) {
         categoryDao.dbDeleteCategory(id);
     }
+    
+    @Override
+    public int getCategoryCount() {
+    	return categoryDao.getCategoryCount();
+    }
 }

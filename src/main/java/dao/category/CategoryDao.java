@@ -14,4 +14,6 @@ public interface CategoryDao {
     void dbUpdateCategory(Category category);
 
     void dbDeleteCategory(int id);
+
+	int getCategoryCount();
 }

@@ -37,7 +37,7 @@ public class AuthService {
 	}
 
 	public boolean updateProfile(Integer userId, String username, String email, String password, String phone_number,
-			String bio, String occupation, String profileImagePath) {
+			String bio, String occupation, String profileImageName) {
 		try {
 
 			User user = userDAO.findById(userId);
@@ -56,8 +56,8 @@ public class AuthService {
 				user.setPassword(hashedPassword);
 			}
 
-			if (profileImagePath != null && !profileImagePath.isEmpty()) {
-				user.setProfile_img(profileImagePath);
+			if (profileImageName != null && !profileImageName.isEmpty()) {
+				user.setProfile_img(profileImageName);
 			}
 
 			return userDAO.updateUser(user);

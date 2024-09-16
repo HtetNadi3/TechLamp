@@ -14,4 +14,6 @@ public interface CategoryService {
     void doUpdateCategory(CategoryDTO categoryDto);
 
     void doDeleteCategory(int id);
+
+	int getCategoryCount();
 }

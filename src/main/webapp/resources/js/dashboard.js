@@ -7,3 +7,10 @@ $(document).ready(function() {
         $(this).addClass('active');
     });
 });
+<script>
+    function addLink(postId) {
+        document.getElementById('deleteLink').href = 
+            '${pageContext.request.contextPath}/dashboard/delete?id=' + postId;
+    }
+</script>
+

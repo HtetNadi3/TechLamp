@@ -1,9 +1,10 @@
 @charset "ISO-8859-1";
+@charset "UTF-8";
 
 
 body {
-  background-image: linear-gradient(to right, #f7f7f8, #d2def2, #b3bff8);
-  color: #3f4040;
+  
+  
   font-family: 'poppin', sans-serif;
   margin: 0;
   padding: 0;
@@ -36,9 +37,17 @@ body {
 
 /* Sidebar */
 .sidebar {
+  position: fixed; /* Fixes the sidebar in place */
+  top: 0; /* Positions it at the top of the viewport */
+  left: 0; /* Positions it at the left of the viewport */
+  height: 1000vh; /* Makes it as tall as the viewport */
+  width: 250px; /* Adjust width as needed */
   padding: 20px;
-  height: 100vh;
+  background: rgba(255, 255, 255, 0.8); /* Optional: for visual contrast */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: add a shadow */
+  z-index: 1000; /* Ensures it's above other content */
 }
+
 
 .sidebar-header h4 {
   color: #3f4040;
@@ -117,6 +126,7 @@ body {
   margin-bottom: 1rem;
   color: #3f4040; /* Text color */
 }
+
 
 .table-responsive .t thead th {
   background: rgba(255, 255, 255, 0.25); /* Slightly more opaque for header */

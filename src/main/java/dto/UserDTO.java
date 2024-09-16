@@ -2,6 +2,8 @@ package dto;
 
 import java.util.Date;
 
+import entity.User;
+
 public class UserDTO {
     private int id;
     private String username;
@@ -13,9 +15,22 @@ public class UserDTO {
     private String bio;
     private String occupation;
     private String profile_img;
+    private int postCount;
     
 	public UserDTO() {}
-
+	
+	public UserDTO(User user) {
+		this.id = user.getId();
+		this.username = user.getUsername();
+		this.password = user.getPassword();
+		this.email = user.getEmail();
+		this.role = user.getRole();
+		this.created_date = user.getCreated_date();
+		this.phone_number = user.getPhone_number();
+		this.bio = user.getBio();
+		this.occupation = user.getOccupation();
+		this.profile_img = user.getProfile_img();
+		}
 	public UserDTO(int id, String username, String password,String email, String role, Date created_date) {
 		super();
 		this.id = id;
@@ -104,6 +119,14 @@ public class UserDTO {
 
 	public void setProfile_img(String profile_img) {
 		this.profile_img = profile_img;
+	}
+
+	public int getPostCount() {
+		return postCount;
+	}
+
+	public void setPostCount(int postCount) {
+		this.postCount = postCount;
 	}
 
 	

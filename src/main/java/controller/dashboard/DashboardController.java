@@ -38,13 +38,23 @@ public class DashboardController extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		try {
+			int userCount = userService.getUserCount();
+			int postCount = postService.getPostCount();
+			int categoryCount = categoryService.getCategoryCount();
 			List<PostDTO> posts = postService.doGetAllPosts();
 			List<UserDTO> users = userService.getAllUsers();
 			List<CategoryDTO> categories = categoryService.doGetAllCategories();
+			List<PostDTO> postsRecent = postService.getRecentPosts(5);
+			List<UserDTO> usersRecent = userService.getRecentUsers(5);
 			
 			req.setAttribute("posts", posts);
 			req.setAttribute("users", users);
 			req.setAttribute("categories", categories);
+			req.setAttribute("userCount", userCount);
+			req.setAttribute("postCount", postCount);
+			req.setAttribute("categoryCount", categoryCount);
+			req.setAttribute("recentPosts", postsRecent);
+			req.setAttribute("recentUsers", usersRecent);
 			Route.forwardToPage(Route.DASHBOARD, req, resp);
 //			Route.redirectToPage("/dashboard", req, resp);
 		

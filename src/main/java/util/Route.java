@@ -18,6 +18,11 @@ public class Route {
     public static final String CATEGORY_INSERT_UPDATE_JSP = "/jsp/category/insert_update.jsp";
     public static final String CATEGORY_LIST_JSP = "/jsp/category/list.jsp";
     public static final String USER_PROFILE = "/jsp/user/profile.jsp";
+    public static final String COMMENT_INSERT_UPDATE_JSP = "/jsp/comment/insert_update.jsp";
+    public static final String COMMENT_LIST_JSP = "/jsp/comment/list.jsp";
+    public static final String DASHBOARD_ALL_POSTS = "/jsp/admin/dashboardPost.jsp";
+    public static final String DASHBOARD_ALL_USERS = "/jsp/admin/dashboardUser.jsp";
+    public static final String DASHBOARD_ALL_CATEGORIES = "/jsp/admin/dashboardCategories.jsp";
 
 	public static void forwardToPage(String page, HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -101,4 +101,23 @@ public class CategoryDaoImpl implements CategoryDao {
             e.printStackTrace();
         }
     }
+    
+    @Override
+    public int getCategoryCount() {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM category";
+       
+        try (Connection connection = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql))  {
+            
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
 }

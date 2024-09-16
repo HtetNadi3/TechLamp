@@ -10,6 +10,7 @@
 </head>
 <body class="bg-light text-dark">
 	<div class="homePage container-fluid mt-2">
+
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
 			<div class="container-fluid">
 				<!-- Logo -->
@@ -26,6 +27,7 @@
 
 				<!-- Navbar Content -->
 				<div class="collapse navbar-collapse" id="navbarResponsive">
+					
 					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 						<form class="d-flex ms-5 my-2 my-lg-0 me-2"
 							action="${pageContext.request.contextPath}/post/list"
@@ -38,19 +40,24 @@
 						</form>
 
 					</ul>
-
+					
 					<ul
 						class="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
 						<!-- Categories Dropdown -->
-						<li class="nav-item dropdown"><a
-							class="nav-link dropdown-toggle fs-5" href="#"
-							id="categoriesDropdown" role="button" data-bs-toggle="dropdown"
-							aria-expanded="false">Categories</a>
-							<ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-								<li><a class="dropdown-item" href="#">Category 1</a></li>
-								<li><a class="dropdown-item" href="#">Category 2</a></li>
-								<li><a class="dropdown-item" href="#">Category 3</a></li>
-							</ul></li>
+						<form action="${pageContext.request.contextPath}/post/list"
+							method="get" class="mb-4">
+							<div class="input-group">
+								<select name="categoryId" class="form-select">
+									<option value="">All Categories</option>
+									<c:forEach var="category" items="${categories}">
+										<option value="${category.id}"
+											${param.categoryId == category.id ? 'selected' : ''}>${category.name}</option>
+									</c:forEach>
+								</select>
+								<button type="submit" class="btn btn-primary">Filter</button>
+							</div>
+						</form>
+
 
 						<!-- Write Button -->
 						<li class="nav-item"><a class="nav-link btn  px-4 ms-2 fs-5"
@@ -72,35 +79,12 @@
 						</a>
 							<ul class="dropdown-menu dropdown-menu-end"
 								aria-labelledby="profileDropdown">
-								<li><a class="dropdown-item" href="#"><i
+								<li><a class="dropdown-item"
+									href="${pageContext.request.contextPath}/profile"><i
 										class="fas fa-user me-2"></i>Profile</a></li>
 								<li><a class="dropdown-item" href="#"><i
 										class="fas fa-bookmark me-2"></i>Library</a></li>
-								<li><a class="dropdown-item" href="#"><i
-										class="fas fa-book me-2"></i>Stories</a></li>
-								<li><a class="dropdown-item" href="#"><i
-										class="fas fa-chart-line me-2"></i>Stats</a></li>
-								<li>
-									<hr class="dropdown-divider">
-								</li>
-								<li><a class="dropdown-item" href="#"><i
-										class="fas fa-cog me-2"></i>Settings</a></li>
-								<li><a class="dropdown-item" href="#"><i
-										class="fas fa-sliders-h me-2"></i>Refine Recommendations</a></li>
-								<li><a class="dropdown-item" href="#"><i
-										class="fas fa-file-alt me-2"></i>Manage Publications</a></li>
-								<li><a class="dropdown-item" href="#"><i
-										class="fas fa-question-circle me-2"></i>Help</a></li>
-								<li>
-									<hr class="dropdown-divider">
-								</li>
-								<li><a class="dropdown-item" href="#"><i
-										class="fas fa-star me-2"></i>Become a Medium Member</a></li>
-								<li><a class="dropdown-item" href="#"><i
-										class="fas fa-at me-2"></i>Create a Mastodon Account</a></li>
-								<li><a class="dropdown-item" href="#"><i
-										class="fas fa-check-circle me-2"></i>Apply for Author
-										Verification</a></li>
+
 							</ul></li>
 					</ul>
 				</div>
@@ -118,8 +102,8 @@
 							<div class="col-8">
 								<div class="w-100 p-3">
 									<div class="d-flex align-items-start mb-2">
-										<img src="${user.profile_img != null ? user.profile_img : '/img/profile.png'}" class="rounded-circle me-3"
-											alt="Author" width="50" height="50">
+										<img src="${pageContext.request.contextPath}/img/profile.png"
+											class="rounded-circle me-3" width="50" height="50">
 										<div class="d-flex align-items-center mb-1">
 											<h6 class="fw-bold mb-0 fs-5">${post.author}</h6>
 											<span class="badge bg-primary ms-2">${post.categoryName}</span>
@@ -174,9 +158,14 @@
 									<div class="meta-info d-flex align-items-center">
 										<span class="text-muted me-3"> <i
 											class="fas fa-calendar-alt"></i> ${post.createdAt != null ? post.createdAt : 'N/A'}
-										</span> <span class="text-muted me-3"><i class="fas fa-eye"></i>
-											501</span> <span class="text-muted me-3"><i
-											class="fas fa-comment"></i> 6</span> <span class="text-muted me-3"><i
+										</span>
+										<!-- <span class="text-muted me-3"><i class="fas fa-eye"></i>
+											501</span>  -->
+										<a
+											href="${pageContext.request.contextPath}/comment/list?postId=${post.id}">
+											<span class="text-muted me-3"><i
+												class="fas fa-comment"></i> ${commentCounts[post.id]}</span>
+										</a> <span class="text-muted me-3"><i
 											class="fa-solid fa-heart"></i> 23</span>
 									</div>
 								</div>
@@ -203,7 +192,7 @@
 								<div class="d-flex justify-content-end">
 									<img
 										src="${imgSrc != null && !imgSrc.isEmpty() ? imgSrc : 'default-image-path.jpg'}"
-										class="rounded" alt="Article Image"
+										class="rounded" alt="not include img"
 										style="width: 200px; height: 200px; object-fit: cover;">
 								</div>
 							</div>
@@ -219,7 +208,8 @@
 						<h6 class="fw-bold h3">Who to follow</h6>
 						<ul class="list-unstyled ">
 							<c:forEach var="user" items="${users}">
-								<li class="d-flex align-items-center mb-3"><img src=""
+								<li class="d-flex align-items-center mb-3"><img
+									src="${pageContext.request.contextPath}/img/profile.png"
 									class="rounded-circle me-2" alt="${user.username}" width="40"
 									height="40"> <span class="fw-bold me-auto">${user.username}</span>
 									<button class="btn btn-outline-primary btn-sm">Follow</button>
@@ -256,5 +246,6 @@
 			</div>
 		</div>
 	</div>
+
 </body>
 </html>

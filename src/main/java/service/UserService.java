@@ -1,6 +1,7 @@
 package service;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,5 +17,8 @@ public interface UserService {
     void updateUser(UserDTO userDTO) throws Exception;
     void deleteUser(int id) throws Exception;
 	String saveFile(Part filePart, HttpServletRequest request) throws IOException;
+	int getUserCount();
+	List<UserDTO> getRecentUsers(int limit) throws SQLException;
+	String getUsernameById(int userId) throws SQLException;
 
 }
