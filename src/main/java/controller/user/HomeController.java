@@ -12,55 +12,59 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
 
 import auth.AuthService;
 import dao.UserDAO;
 import dao.UserDAOImpl;
 import dto.UserDTO;
+import dto.bookmark.BookmarkDTO;
 import dto.post.PostDTO;
 import entity.User;
 import service.UserService;
 import service.UserServiceImpl;
+import service.bookmark.BookmarkService;
+import service.bookmark.BookmarkServiceImpl;
 import service.post.PostService;
 import service.post.PostServiceImpl;
 import util.Route;
 
-@WebServlet({"/register", "/login", "/profile", "/singup", "/signin", "/profile/update", "/user"})
-@MultipartConfig
+@WebServlet("/")
 public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final AuthService authService;
 	private final UserService userservice;
 	private final PostService postService;
+	private final BookmarkService bookmarkService;
 
 	public HomeController() {
 		UserDAO userDAO = new UserDAOImpl();
 		this.authService = new AuthService(userDAO);
 		this.userservice = new UserServiceImpl();
 		this.postService = new PostServiceImpl();
+		this.bookmarkService = new BookmarkServiceImpl();
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-	        throws ServletException, IOException {
-	    String path = request.getServletPath();
-	    
-	    if (path == null || "/".equals(path)) {
-	        Route.forwardToPage(Route.WELCOME, request, response);
-	    } else if ("/register".equals(path)) {
-	        Route.forwardToPage(Route.USER_REG, request, response);
-	    } else if ("/login".equals(path)) {
-	        Route.forwardToPage(Route.USER_LOGIN, request, response);
-	    } else if ("/profile".equals(path)) {
-	        handleProfileRequest(request, response);
-	    } else if ("/user".equals(path)) {
-	        handleUserProfileRequest(request, response);
-	    } else {
-	        response.sendError(HttpServletResponse.SC_NOT_FOUND);
-	    }
-	}
+			throws ServletException, IOException {
+		String path = request.getServletPath();
 
+		if (path == null || "/".equals(path)) {
+			Route.forwardToPage(Route.WELCOME, request, response);
+		} else if ("/register".equals(path)) {
+			Route.forwardToPage(Route.USER_REG, request, response);
+		} else if ("/login".equals(path)) {
+			Route.forwardToPage(Route.USER_LOGIN, request, response);
+		} else if ("/profile".equals(path)) {
+			handleProfileRequest(request, response);
+		} else if ("/user".equals(path)) {
+			handleUserProfileRequest(request, response);
+		}
+
+		else {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
+	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -83,6 +87,17 @@ public class HomeController extends HttpServlet {
 				updateUserProfile(request, response);
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+		} else if ("/user/bookmark".equals(path)) {
+			try {
+				BookmarkDTO bookmarkDto = new BookmarkDTO();
+				HttpSession session = request.getSession();
+				bookmarkDto.setUserId((Integer) session.getAttribute("userId"));
+				bookmarkDto.setPostId(Integer.parseInt(request.getParameter("postId")));
+				bookmarkService.doAddBookmark(bookmarkDto);
+			} catch (Exception e) {
+				e.printStackTrace();
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
 		} else {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -148,64 +163,61 @@ public class HomeController extends HttpServlet {
 			handleError("Username already exists", Route.USER_REG, request, response);
 		}
 	}
-	
+
 	private void handleProfileRequest(HttpServletRequest request, HttpServletResponse response)
-	        throws ServletException, IOException {
-	    HttpSession session = request.getSession();
-	    Integer userId = (Integer) session.getAttribute("userId");
+			throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		Integer userId = (Integer) session.getAttribute("userId");
 
-	    if (userId != null) {
-	        try {
-	            List<PostDTO> postDto = postService.doGetAllPosts().stream()
-	                    .filter(post -> post.getCreatedUserId() == userId)
-	                    .collect(Collectors.toList());
+		if (userId != null) {
+			try {
+				List<PostDTO> postDto = postService.doGetAllPosts().stream()
+						.filter(post -> post.getCreatedUserId() == userId).collect(Collectors.toList());
 
-	            UserDTO user = userservice.getUserById(userId);
-	            
-	            request.setAttribute("user", user);
-	            request.setAttribute("postList", postDto);
-//	            Route.redirectToPage("/profile", request, response);
-	            Route.forwardToPage(Route.USER_PROFILE, request, response);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-	        }
-	    } else {
-	        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-	    }
+				UserDTO user = userservice.getUserById(userId);
+
+				request.setAttribute("user", user);
+				request.setAttribute("postList", postDto);
+				Route.forwardToPage(Route.USER_PROFILE, request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		}
 	}
 
 	private void handleUserProfileRequest(HttpServletRequest request, HttpServletResponse response)
-	        throws ServletException, IOException {
-	    String idParam = request.getParameter("id");
-	    if (idParam != null && !idParam.trim().isEmpty()) {
-	        try {
-	            idParam = idParam.replaceAll("[^\\d]", "");
-	            int userId = Integer.parseInt(idParam);
+			throws ServletException, IOException {
+		String idParam = request.getParameter("id");
+		if (idParam != null && !idParam.trim().isEmpty()) {
+			try {
+				idParam = idParam.replaceAll("[^\\d]", "");
+				int userId = Integer.parseInt(idParam);
 
-	            UserDTO user = userservice.getUserById(userId);
-	            if (user != null) {
-	                List<PostDTO> posts = postService.doGetAllPosts().stream()
-	                        .filter(post -> post.getCreatedUserId() == userId)
-	                        .collect(Collectors.toList());
+				UserDTO user = userservice.getUserById(userId);
+				if (user != null) {
+					List<PostDTO> posts = postService.doGetAllPosts().stream()
+							.filter(post -> post.getCreatedUserId() == userId).collect(Collectors.toList());
 
-	                request.setAttribute("user", user);
-	                request.setAttribute("postList", posts);
+					request.setAttribute("user", user);
+					request.setAttribute("postList", posts);
 //	                Route.redirectToPage("/user", request, response);
-	                Route.forwardToPage(Route.USER_PROFILE, request, response);
-	            } else {
-	                response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found");
-	            }
-	        } catch (NumberFormatException e) {
-	            e.printStackTrace();
-	            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid user ID format");
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-	        }
-	    } else {
-	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User ID is missing");
-	    }
+					Route.forwardToPage(Route.USER_PROFILE, request, response);
+				} else {
+					response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found");
+				}
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid user ID format");
+			} catch (Exception e) {
+				e.printStackTrace();
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			}
+		} else {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User ID is missing");
+		}
 	}
 
 	private void updateUserProfile(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -223,11 +235,7 @@ public class HomeController extends HttpServlet {
 			String phone_number = request.getParameter("phone_number");
 			String bio = request.getParameter("bio");
 			String occupation = request.getParameter("occupation");
-			Part profileImagePart = request.getPart("profile_img");
 			String profileImageName = null;
-			if (profileImagePart != null && profileImagePart.getSize() > 0) {
-				profileImageName = userservice.saveFile(profileImagePart, request);
-			}
 
 			if (password != null && !password.isEmpty()) {
 				if (password.length() < 8 || !password.matches(".*[A-Z].*") || !password.matches(".*[0-9].*")) {

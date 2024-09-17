@@ -9,8 +9,6 @@
 <title>User Profile</title>
 
 <style>
-
-
 .user-info {
 	background: rgba(255, 255, 255, 0.15);
 	padding: 20px;
@@ -68,7 +66,7 @@
 </head>
 <body>
 	<div class="container mt-2 mb-5">
-	<%@ include file="/jsp/common/navbar.jsp"%>
+		<%@ include file="/jsp/common/navbar.jsp"%>
 		<div class="row">
 			<!-- Left Column: User's Posts -->
 			<div class="col-8">
@@ -140,8 +138,8 @@
 										href="${pageContext.request.contextPath}/comment/list?postId=${post.id}">
 										<span class="text-muted me-3"><i class="fas fa-comment"></i>
 											${commentCounts[post.id]}</span>
-									</a> 
-									    	
+									</a>
+
 								</div>
 							</div>
 						</div>
@@ -202,8 +200,21 @@
 						</p>
 					</div>
 
+					<%
+					Integer userId = (Integer) session.getAttribute("userId");
+					String idParam = request.getParameter("id");
+					System.out.println(userId);
+					System.out.println(idParam);
+					if (userId != null && idParam != null) {
+						if (userId.equals(Integer.parseInt(idParam))) {
+					%>
 					<button type="button" class="btn btn-primary edit-profile-btn"
 						onclick="toggleEditProfile()">Edit Profile</button>
+					<%
+					}
+					}
+					%>
+
 				</div>
 
 				<!-- User Update Form (Hidden by default) -->

@@ -91,44 +91,50 @@ public class PostController extends HttpServlet {
 	}
 
 	private void listPosts(HttpServletRequest request, HttpServletResponse response, boolean isSearch)
-			throws Exception {
+	        throws Exception {
 
-		String searchTitle = request.getParameter("searchTitle");
-		String categoryIdStr = request.getParameter("categoryId");
+	    String searchTitle = request.getParameter("searchTitle");
+	    String categoryIdStr = request.getParameter("categoryId");
+	    String searchTerm = request.getParameter("searchTerm");  // For searching users
 
-		List<PostDTO> posts;
+	    List<PostDTO> posts;
+	    List<UserDTO> users;
 
-		if (searchTitle != null && !searchTitle.trim().isEmpty() && categoryIdStr != null && !categoryIdStr.isEmpty()) {
-			int categoryId = Integer.parseInt(categoryIdStr);
-			posts = postService.searchPostsByTitleAndCategory(searchTitle, categoryId);
+	    if (searchTitle != null && !searchTitle.trim().isEmpty() && categoryIdStr != null && !categoryIdStr.isEmpty()) {
+	        int categoryId = Integer.parseInt(categoryIdStr);
+	        posts = postService.searchPostsByTitleAndCategory(searchTitle, categoryId);
 
-		} else if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
-			int categoryId = Integer.parseInt(categoryIdStr);
-			posts = postService.getPostsByCategoryId(categoryId);
+	    } else if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
+	        int categoryId = Integer.parseInt(categoryIdStr);
+	        posts = postService.getPostsByCategoryId(categoryId);
 
-		} else if (searchTitle != null && !searchTitle.trim().isEmpty()) {
-			posts = postService.doSearchPostsByTitle(searchTitle);
+	    } else if (searchTitle != null && !searchTitle.trim().isEmpty()) {
+	        posts = postService.doSearchPostsByTitle(searchTitle);
 
-		} else {
-			posts = postService.doGetAllPosts();
-		}
+	    } else {
+	        posts = postService.doGetAllPosts();
+	    }
 
-		List<UserDTO> users = userService.getAllUsers();
+	    if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+	        users = userService.searchUsersByUsername(searchTerm);
+	    } else {
+	        users = userService.getAllUsers();
+	    }
 
-		Map<Integer, Integer> commentCounts = new HashMap<>();
-		for (PostDTO post : posts) {
-			int commentCount = commentService.getCommentCountByPostId(post.getId());
-			commentCounts.put(post.getId(), commentCount);
-		}
+	    Map<Integer, Integer> commentCounts = new HashMap<>();
+	    for (PostDTO post : posts) {
+	        int commentCount = commentService.getCommentCountByPostId(post.getId());
+	        commentCounts.put(post.getId(), commentCount);
+	    }
 
-		request.setAttribute("postList", posts);
-		request.setAttribute("users", users);
-		request.setAttribute("commentCounts", commentCounts);
+	    request.setAttribute("postList", posts);
+	    request.setAttribute("users", users);  // Set users for displaying them in post_list.jsp
+	    request.setAttribute("commentCounts", commentCounts);
+	    request.setAttribute("categories", categoryService.doGetAllCategories());
 
-		request.setAttribute("categories", categoryService.doGetAllCategories());
-
-		Route.forwardToPage(Route.POST_LIST_JSP, request, response);
+	    Route.forwardToPage(Route.POST_LIST_JSP, request, response);
 	}
+
 
 	private void showEditForm(HttpServletRequest request, HttpServletResponse response)
 			throws SQLException, ServletException, IOException {
@@ -144,7 +150,7 @@ public class PostController extends HttpServlet {
 			throws SQLException, IOException, ServletException {
 		PostDTO updatedPost = getPostParameters(request);
 		postService.doUpdatePost(updatedPost);
-		Route.redirectToPage("/post/list", request, response);
+		Route.redirectToPage("/post/detail", request, response);
 	}
 
 	private void deletePost(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
@@ -164,7 +170,7 @@ public class PostController extends HttpServlet {
 		request.setAttribute("loginUserId", loginUserId);
 		Route.forwardToPage(Route.POST_DETAIL_JSP, request, response);
 	}
-
+	
 	private PostDTO getPostParameters(HttpServletRequest request) {
 		String idParam = request.getParameter("id");
 		int id = (idParam != null && !idParam.isEmpty()) ? Integer.parseInt(idParam) : 0;

@@ -2,32 +2,13 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-
 <%@ include file="/jsp/common/header.jsp"%>
 <!DOCTYPE html>
 <html>
 <head>
 <title>Post ${type == 'edit' ? 'Edit ' : 'Registration'}</title>
-<link
-	href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css"
-	rel="stylesheet">
-<style>
-.card {
-	width: 100%;
-	max-width: 800px;
-	display: flex;
-	flex-direction: column;
-}
 
-#editor-container {
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	min-height: 200px;
-	resize: horizontal;
-	overflow: auto;
-	flex-grow: 1;
-}
-</style>
+
 </head>
 <body class="d-flex flex-column vh-100">
 	<div
@@ -54,7 +35,8 @@
 
 					<div class="mb-3 align-items-center">
 						<label class="fw-medium required" for="categories">Categories</label>
-						<select name="categoryId" id="category">
+						<select name="categoryId" class="form-select">
+						<option value="" selected disabled>Select Category</option>
 							<c:forEach var="category" items="${categories}">
 								<option value="${category.id}"
 									<c:if test="${post.categoryId == category.id}">selected</c:if>>

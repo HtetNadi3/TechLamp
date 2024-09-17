@@ -5,18 +5,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Post List</title>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
 </head>
-<body class="bg-light text-dark">
-	<div class="homePage container-fluid mt-2">
+<body>
+	<div>
 		<%@ include file="/jsp/common/navbar.jsp"%>
-		<!-- posts -->
-		<div class="container-fluid mt-4 ms-5 pe-5 ">
-			<!-- full -->
-			<div class="row">
-				<div class="col-8">
-					<c:forEach var="post" items="${postList}" varStatus="loop">
+		<h1>Login User Name's Bookmarks</h1>
+		<c:forEach var="post" items="${postList}" varStatus="loop">
 						<div class="row mb-5">
 							<!-- content and image -->
 							<div class="col-8">
@@ -87,13 +83,10 @@
 											href="${pageContext.request.contextPath}/comment/list?postId=${post.id}">
 											<span class="text-muted me-3"><i
 												class="fas fa-comment"></i> ${commentCounts[post.id]}</span>
-										</a>
-										<a
+										</a> <span class="text-muted me-3"><a
 											href="${pageContext.request.contextPath}/user/bookmark:${post.id}"
-											id="bookmark" class="text-muted text-decoration-none"> <i
-											class="fas fa-bookmark"></i> Bookmark
-										</a>
-
+											id="bookmark" class="text-muted text-decoration-none"><i
+												class="fas fa-bookmark"></i> Bookmark</a></span>
 									</div>
 								</div>
 							</div>
@@ -127,61 +120,6 @@
 							<hr style="color: rgb(133, 134, 134);" class="mt-2">
 						</div>
 					</c:forEach>
-				</div>
-
-				<div class="col-4">
-					<!-- Third Flex Item: Writer List -->
-					<div class=" writer-list ms-5">
-						<h6 class="fw-bold h3">Our Contents Creator</h6>
-						<form class="d-flex ms-2 me-1 mb-2"
-							action="${pageContext.request.contextPath}/post/list"
-							method="post">
-
-							<input class="form-control fs-5 border" type="search"
-								name="searchTerm" placeholder="Search" aria-label="Search">
-							<button class="btn me-2 fs-5" type="submit">
-								<i class="fas fa-search fa-lg"></i>
-							</button>
-						</form>
-						<ul class="list-unstyled ">
-							<c:forEach var="user" items="${users}">
-								<li class="d-flex align-items-center mb-3"><i
-									class="fas fa-user-circle fa-2x pe-2" style="color: #583cf5"></i>
-									<a href="${pageContext.request.contextPath}/user?id=${user.id}"
-									class="fw-bold me-auto" style="text-decoration: none">${user.username}</a>
-
-								</li>
-							</c:forEach>
-						</ul>
-					</div>
-				</div>
-
-			</div>
-		</div>
-	</div>
-
-	<%@ include file="/jsp/common/footer.jsp"%>
-	<div class="modal fade" id="deleteModal" tabindex="-1"
-		aria-labelledby="deleteModal" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-sm">
-			<div class="modal-content text-center text-danger">
-				<div class="modal-header">
-					<h1 class="modal-title fs-5" id="deleteModal">
-						<i class="fa-solid fa-triangle-exclamation"></i>&nbsp;&nbsp;Delete
-						Post?
-					</h1>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"
-						aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<span>Are You Sure To Delete?</span>
-				</div>
-				<div class="modal-footer justify-content-center">
-					<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
-					<a id="deleteLink" class="btn btn-danger">Delete</a>
-				</div>
-			</div>
-		</div>
 	</div>
 
 </body>

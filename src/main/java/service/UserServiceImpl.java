@@ -86,24 +86,6 @@ public class UserServiceImpl implements UserService {
         userDAO.deleteUser(id);
     }
 
-    
-   
-    @Override
-    public String saveFile(Part profileImagePart, HttpServletRequest request) throws IOException {
-        String fileName = Paths.get(profileImagePart.getSubmittedFileName()).getFileName().toString();
-        String uploadDir = request.getServletContext().getRealPath("/img");
-        File uploadDirectory = new File(uploadDir);
-        if (!uploadDirectory.exists()) {
-            uploadDirectory.mkdirs();
-        }
-        File file = new File(uploadDirectory, fileName);
-        try (InputStream input = profileImagePart.getInputStream()) {
-            Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }
-        return fileName;
-    }
-
-
     @Override
     public int getUserCount() {
     	return userDAO.getUserCount();
@@ -122,6 +104,18 @@ public class UserServiceImpl implements UserService {
     public String getUsernameById(int userId) throws SQLException {
         return userDAO.getUsernameById(userId);
     }
+    
+    @Override
+    public List<UserDTO> searchUsersByUsername(String searchTerm) {
+    	List<User> users = userDAO.findUsersByUsername(searchTerm);
+        return users.stream().map(user -> {
+        	UserDTO userDTO = new UserDTO(user);
+        	return userDTO;
+        }).collect(Collectors.toList());
+    
+
+    }
+
 
 
 }

@@ -166,6 +166,29 @@ public class UserDAOImpl implements UserDAO {
         }
         return null;
     }
+    
+    @Override
+    public List<User> findUsersByUsername(String searchTerm) {
+        String query = "SELECT * FROM users WHERE username LIKE ?";
+        List<User> users = new ArrayList<>();
+
+        try (Connection connection = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, "%" + searchTerm + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    User user = mapResultSetToUser(rs);
+                    users.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return users;
+    }
+
 
 
     private User mapResultSetToUser(ResultSet resultSet) throws SQLException {

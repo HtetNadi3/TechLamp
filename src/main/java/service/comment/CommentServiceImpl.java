@@ -45,7 +45,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDTO> doGetCommentByPostId(int postId) {
-    	return commentDao.dbGetAllComments().stream().map(comment -> {
+    	return commentDao.getCommentsByPostId(postId).stream().map(comment -> {
             try {
                 String commentCreatedUserName = commentDao.dbGetCommentCreatedUserName(comment.getId());
                 

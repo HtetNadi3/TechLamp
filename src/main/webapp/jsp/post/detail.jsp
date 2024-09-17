@@ -6,75 +6,13 @@
 <html>
 <head>
 <title>Post Detail</title>
-<style>
-body {
-	font-family: Arial, sans-serif;
-	background-color: #f5f5f5;
-	color: #333;
-}
 
-.container-fluid {
-	max-width: 85%;
-	margin-top: 10px;
-}
 
-.card {
-	border: none;
-	background-color: #ffffff;
-	border-radius: 8px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.card-title {
-	font-size: 2rem;
-	font-weight: bold;
-	color: #333;
-	margin-bottom: 15px;
-}
-
-.post-metadata {
-	color: #6c757d;
-	font-size: 0.9rem;
-	margin-bottom: 20px;
-}
-
-.post-metadata i {
-	margin-right: 5px;
-}
-
-.post-content {
-	font-size: 1.1rem;
-	line-height: 1.6;
-	margin-bottom: 20px;
-}
-
-.icon-bar {
-	margin-top: 15px;
-	display: flex;
-	justify-content: space-between;
-}
-
-.icon-bar .btn {
-	font-size: 1.2rem;
-	color: #6c757d;
-	border: none;
-	background: none;
-}
-
-.icon-bar .btn:hover {
-	color: #333;
-}
-
-.btn-dark {
-	background-color: #333;
-	color: white;
-}
-</style>
 </head>
 <body>
 	<%@ include file="/jsp/common/navbar.jsp"%>
 	<div class="container-fluid">
-		<div class="card p-4">
+		<div class="card ql-editor p-4">
 			<h1 class="card-title">${post.title}</h1>
 			<div class="post-metadata">
 				<i class="fas fa-user"></i>${post.author} &middot; <i
@@ -84,26 +22,51 @@ body {
 			<div class="post-content">${post.content}</div>
 
 			<div class="icon-bar">
-				<button class="btn">
-					<i class="fas fa-thumbs-up"></i> 8.4K
-				</button>
-				<button class="btn">
-					<i class="fas fa-comment"></i>
-				</button>
+				<span class="text-muted me-3"><i class="fa-solid fa-heart"></i>
+					23</span> <a
+					href="${pageContext.request.contextPath}/comment/list?postId=${post.id}">
+					<span class="text-muted me-3"><i class="fas fa-comment"></i>
+						${commentCounts[post.id]}</span>
+				</a>
+
 
 			</div>
 
 			<div class="text-center mt-4">
 				<c:if test="${post.createdUserId == loginUserId}">
 					<a href="edit?id=${post.id}" class="text-muted me-2">Edit</a>
-					<a href="javascript:void(0)" onclick="addLink(${post.id})"
-						class="text-danger">Delete</a>
+					<button type="button" data-bs-toggle="modal"
+						data-bs-target="#deleteModal" onclick="addLink(${post.id})"
+						class="btn mx-3 btn-danger">
+						<i class="fa-solid fa-trash"></i>
+					</button>
 				</c:if>
 				<a href="${pageContext.request.contextPath}/post/list"
 					class="btn btn-dark">Back</a>
 			</div>
 		</div>
 	</div>
-
+	<div class="modal fade" id="deleteModal" tabindex="-1"
+		aria-labelledby="deleteModal" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-sm">
+			<div class="modal-content text-center text-danger">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="deleteModal">
+						<i class="fa-solid fa-triangle-exclamation"></i>&nbsp;&nbsp;Delete
+						Post?
+					</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<span>Are You Sure To Delete?</span>
+				</div>
+				<div class="modal-footer justify-content-center">
+					<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+					<a id="deleteLink" class="btn btn-danger">Delete</a>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

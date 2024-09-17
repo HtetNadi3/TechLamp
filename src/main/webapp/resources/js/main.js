@@ -3,13 +3,26 @@ function addLink(id) {
 }
 
 $(document).ready(function() {
-	var form = document.getElementById('postForm');
-	form.onsubmit = function() {
-		var content = document.getElementById('content');
-		content.value = quill.root.innerHTML;
-		// Extract images from the content
-		extractImagesFromContent(content.value);
-	};
+	
+	
+	$('#bookmark').on('click', function(e) {
+		e.preventDefault();
+		let href = $(this).attr('href');
+		let url = href.split(":")[0];
+		let postId = href.split(":")[1];
+		$.ajax({
+			url: url,
+			data: { postId: postId },
+			type: 'POST',
+			success: function(response) {
+				$('#bookmark').removeClass('text-muted').addClass('text-primary');
+				$('#bookmark-text').text('Remove Bookmark');
+			},
+			error: function(xhr, status, error) {
+				console.error("An error occurred: " + error);
+			}
+		});
+	});
 
 	var quill = new Quill('#editor-container', {
 		theme: 'snow',
@@ -27,15 +40,14 @@ $(document).ready(function() {
 	var initialContent = document.getElementById('content').value;
 	quill.root.innerHTML = initialContent;
 	
-	new TomSelect('#category', {
-		placeholder: 'Select or type category...',
-		plugins: ['remove_button'],
-		onItemAdd: function() {
-			this.control_input.value = '';
-			this.control_input.blur();
-			this.control_input.focus();
-		}
-	});
+	var form = document.getElementById('postForm');
+	form.onsubmit = function() {
+		var content = document.getElementById('content');
+		content.value = quill.root.innerHTML;
+		// Extract images from the content
+		extractImagesFromContent(content.value);
+	};
+	
 });
 
 // Function to extract all image sources from the content

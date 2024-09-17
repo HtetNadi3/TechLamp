@@ -13,7 +13,7 @@
 </head>
 <body>
 	<div class="welcome">
-		    <h1 class="text-center typing-container" id="blog-title"></h1>
+		    <h1 class="typing-container" id="blog-title"></h1>
 
 		
 	</div>

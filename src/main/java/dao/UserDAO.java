@@ -26,4 +26,6 @@ public interface UserDAO {
 
 	String getUsernameById(int userId) throws SQLException;
 
+	List<User> findUsersByUsername(String searchTerm);
+
 }
