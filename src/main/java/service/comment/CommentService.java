@@ -16,6 +16,6 @@ public interface CommentService {
     void doUpdateComment(CommentDTO commentDto);
 
     void doDeleteComment(int id);
-    
+
     public int getCommentCountByPostId(int postId);
 }

@@ -19,6 +19,7 @@ public class CategoryDaoImpl implements CategoryDao {
     private final String SELECT_CATEGORY_BY_ID = "SELECT * FROM category WHERE id = ? and delete_flag = 0";
     private final String UPDATE_CATEGORY_SQL = "UPDATE category SET name = ?, updated_at=? WHERE id = ?";
     private final String DELETE_CATEGORY_SQL = "UPDATE category SET delete_flag=?, deleted_at=? WHERE id = ?";
+    private final String CHECK_DUPLICATE_CATEGORY_NAME_SQL = "SELECT COUNT(*) > 0 FROM category WHERE name =? AND id <> ? and delete_flag=0";
 
     public CategoryDaoImpl() {
         this.connection = DatabaseConnection.getInstance().getConnection();
@@ -55,6 +56,23 @@ public class CategoryDaoImpl implements CategoryDao {
             e.printStackTrace();
         }
         return categories;
+    }
+
+    @Override
+    public boolean dbCheckDuplicateCategoryName(String name, int id) {
+        PreparedStatement statement;
+        try {
+            statement = connection.prepareStatement(CHECK_DUPLICATE_CATEGORY_NAME_SQL);
+            statement.setString(1, name);
+            statement.setInt(2, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getBoolean(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override
@@ -101,15 +119,15 @@ public class CategoryDaoImpl implements CategoryDao {
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public int getCategoryCount() {
         int count = 0;
         String sql = "SELECT COUNT(*) FROM category";
-       
+
         try (Connection connection = DatabaseConnection.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql))  {
-            
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
                     count = rs.getInt(1);

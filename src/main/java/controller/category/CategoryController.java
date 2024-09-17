@@ -9,8 +9,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import dto.category.CategoryDTO;
+import entity.User;
 import service.category.CategoryService;
 import service.category.CategoryServiceImpl;
 import service.post.PostService;
@@ -32,33 +34,43 @@ public class CategoryController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getPathInfo();
-        try {
-            switch (action) {
-            case "/new":
-                Route.forwardToPage(Route.CATEGORY_INSERT_UPDATE_JSP, request, response);
-                break;
-            case "/insert":
-                insertCategory(request, response);
-                break;
-            case "/list":
-                listCategories(request, response, false);
-                break;
-            case "/edit":
-                showEditForm(request, response);
-                break;
-            case "/update":
-                updateCategory(request, response);
-                break;
-            case "/delete":
-                deleteCategory(request, response);
-                break;
-            default:
-                Route.redirectToPage(Route.DASHBOARD_ALL_CATEGORIES, request, response);
-                break;
+        HttpSession session = request.getSession();
+        User loggedInUser = (User) session.getAttribute("user");
+        if (loggedInUser != null) {
+            if (loggedInUser.getRole().equals("admin")) {
+                String action = request.getPathInfo();
+                try {
+                    switch (action) {
+                    case "/new":
+                        Route.forwardToPage(Route.CATEGORY_INSERT_UPDATE_JSP, request, response);
+                        break;
+                    case "/insert":
+                        insertCategory(request, response);
+                        break;
+                    case "/list":
+                        listCategories(request, response, false);
+                        break;
+                    case "/edit":
+                        showEditForm(request, response);
+                        break;
+                    case "/update":
+                        updateCategory(request, response);
+                        break;
+                    case "/delete":
+                        deleteCategory(request, response);
+                        break;
+                    default:
+                        Route.redirectToPage(Route.DASHBOARD_ALL_CATEGORIES, request, response);
+                        break;
+                    }
+                } catch (SQLException ex) {
+                    throw new ServletException(ex);
+                }
+            } else {
+                response.sendRedirect(request.getContextPath() + "/error/403");
             }
-        } catch (SQLException ex) {
-            throw new ServletException(ex);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/error/401");
         }
     }
 
@@ -71,8 +83,15 @@ public class CategoryController extends HttpServlet {
     private void insertCategory(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         CategoryDTO category = getCategoryParameters(request);
-        categoryService.doInsertCategory(category);
-        Route.redirectToPage("/dashboard/category/list", request, response);
+        if (categoryService.doCheckDuplicateCategoryName(category.getName(), category.getId())) {
+            HttpSession session = request.getSession();
+            session.setAttribute("message", "Duplicate Category Name!");
+            request.setAttribute("category", category);
+            Route.forwardToPage(Route.CATEGORY_INSERT_UPDATE_JSP, request, response);
+        } else {
+            categoryService.doInsertCategory(category);
+            Route.redirectToPage("/dashboard/category/list", request, response);
+        }
     }
 
     private void listCategories(HttpServletRequest request, HttpServletResponse response, boolean isSearch)
@@ -80,7 +99,7 @@ public class CategoryController extends HttpServlet {
         List<CategoryDTO> categories = categoryService.doGetAllCategories();
         for (CategoryDTO category : categories) {
             int postCount = postService.getPostCountByCategory(category.getId());
-            category.setPostCount(postCount); 
+            category.setPostCount(postCount);
         }
         request.setAttribute("categoryList", categories);
 
@@ -99,8 +118,15 @@ public class CategoryController extends HttpServlet {
     private void updateCategory(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         CategoryDTO updatedCategory = getCategoryParameters(request);
-        categoryService.doUpdateCategory(updatedCategory);
-        Route.redirectToPage("/dashboard/category/list", request, response);
+        if (categoryService.doCheckDuplicateCategoryName(updatedCategory.getName(), updatedCategory.getId())) {
+            HttpSession session = request.getSession();
+            session.setAttribute("message", "Duplicate Category Name!");
+            request.setAttribute("category", updatedCategory);
+            Route.forwardToPage(Route.CATEGORY_INSERT_UPDATE_JSP, request, response);
+        } else {
+            categoryService.doUpdateCategory(updatedCategory);
+            Route.redirectToPage("/dashboard/category/list", request, response);
+        }
     }
 
     private void deleteCategory(HttpServletRequest request, HttpServletResponse response)

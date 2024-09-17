@@ -9,11 +9,13 @@ public interface CategoryService {
 
     List<CategoryDTO> doGetAllCategories();
 
+    boolean doCheckDuplicateCategoryName(String name, int id);
+
     CategoryDTO doGetCategoryById(int id);
 
     void doUpdateCategory(CategoryDTO categoryDto);
 
     void doDeleteCategory(int id);
 
-	int getCategoryCount();
+    int getCategoryCount();
 }

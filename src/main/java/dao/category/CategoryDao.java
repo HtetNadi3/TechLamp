@@ -11,9 +11,11 @@ public interface CategoryDao {
 
     Category dbGetCategoryById(int id);
 
+    boolean dbCheckDuplicateCategoryName(String name, int id);
+
     void dbUpdateCategory(Category category);
 
     void dbDeleteCategory(int id);
 
-	int getCategoryCount();
+    int getCategoryCount();
 }

@@ -24,6 +24,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public boolean doCheckDuplicateCategoryName(String name, int id) {
+        return categoryDao.dbCheckDuplicateCategoryName(name, id);
+    }
+
+    @Override
     public CategoryDTO doGetCategoryById(int id) {
         return new CategoryDTO(categoryDao.dbGetCategoryById(id));
     }
@@ -37,9 +42,9 @@ public class CategoryServiceImpl implements CategoryService {
     public void doDeleteCategory(int id) {
         categoryDao.dbDeleteCategory(id);
     }
-    
+
     @Override
     public int getCategoryCount() {
-    	return categoryDao.getCategoryCount();
+        return categoryDao.getCategoryCount();
     }
 }

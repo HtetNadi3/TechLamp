@@ -8,7 +8,7 @@ public class DatabaseConnection {
 
     private String dbUrl = "jdbc:mysql://localhost:3306/tech_lamp";
     private String dbUsername = "root";
-    private String dbPassword = "Hnd2232003";
+    private String dbPassword = "fortisrex1412$";
 
     private static DatabaseConnection instance;
     private Connection connection;
@@ -37,7 +37,7 @@ public class DatabaseConnection {
         }
         return connection;
     }
-    
+
     public void closeConnection() {
         if (connection != null) {
             try {

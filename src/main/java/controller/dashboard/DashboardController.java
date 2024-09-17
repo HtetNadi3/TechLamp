@@ -9,10 +9,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import dto.UserDTO;
 import dto.category.CategoryDTO;
 import dto.post.PostDTO;
+import entity.User;
 import service.UserService;
 import service.UserServiceImpl;
 import service.category.CategoryService;
@@ -39,24 +41,34 @@ public class DashboardController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getPathInfo();
-        
-        // Handle case where action is null
-        if (action == null || action.equals("/")) {
-            action = "/overview"; // Default action
-        }
+        HttpSession session = request.getSession();
+        User loggedInUser = (User) session.getAttribute("user");
+        if (loggedInUser != null) {
+            if (loggedInUser.getRole().equals("admin")) {
+                String action = request.getPathInfo();
 
-        try {
-            switch (action) {
-            case "/overview":
-                loadDashboardOverview(request, response);
-                break;
-            default:
-                Route.redirectToPage(Route.DASHBOARD, request, response);
-                break;
+                // Handle case where action is null
+                if (action == null || action.equals("/")) {
+                    action = "/overview"; // Default action
+                }
+
+                try {
+                    switch (action) {
+                    case "/overview":
+                        loadDashboardOverview(request, response);
+                        break;
+                    default:
+                        Route.redirectToPage(Route.DASHBOARD, request, response);
+                        break;
+                    }
+                } catch (SQLException ex) {
+                    throw new ServletException(ex);
+                }
+            } else {
+                response.sendRedirect(request.getContextPath() + "/error/403");
             }
-        } catch (SQLException ex) {
-            throw new ServletException(ex);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/error/401");
         }
     }
 
