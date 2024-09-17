@@ -1,5 +1,6 @@
 package dao.comment;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import entity.Comment;
@@ -20,4 +21,7 @@ public interface CommentDao {
 	int countCommentsByPostId(int postId);
 
 	List<Comment> getCommentsByPostId(int postId);
+
+
+	String dbGetCommentCreatedUserName(int commentId) throws SQLException;
 }

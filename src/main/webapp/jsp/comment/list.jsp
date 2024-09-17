@@ -10,17 +10,76 @@
 <link
 	href="${pageContext.request.contextPath}/resources/css/Comment.css"
 	rel="stylesheet" />
+<style>
+	/* Glassmorphism styling for comment section */
+	.comment-section {
+		ackground-color: #ffffff;
+		border-radius: 16px;
+		padding: 20px;
+		backdrop-filter: blur(10px);
+		box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.3);
+	}
+
+	.comment {
+		background: rgba(255, 255, 255, 0.15);
+		
+		border-radius: 12px;
+		padding: 15px;
+		backdrop-filter: blur(8px);
+		/*box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+		/*border: 1px solid rgba(255, 255, 255, 0.3);*/
+	}
+
+	.comment .comment-content {
+		color: #fff;
+	}
+
+	.comment .fw-bold {
+		color: #fff;
+	}
+
+	.comment .text-muted {
+		color: rgba(255, 255, 255, 0.7);
+	}
+
+	/* Modal glassmorphism */
+	.modal-content {
+		background: rgba(255, 255, 255, 0.2);
+		backdrop-filter: blur(10px);
+		border-radius: 16px;
+		box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.3);
+	}
+
+	.modal-title {
+		color: #fff;
+	}
+
+	.modal-body span {
+		color: #fff;
+	}
+
+	/* General styles */
+	body {
+		background: linear-gradient(135deg, rgba(58, 58, 158, 0.9), rgba(136, 136, 206, 0.5));
+		color: white;
+	}
+</style>
 </head>
 <body class="d-flex flex-column vh-100">
+	<%@ include file="/jsp/common/navbar.jsp"%>
+
 	<div
 		class="container-fluid flex-grow-1 d-flex justify-content-center align-items-center py-3">
 		<div class="col-md-8">
 			<h3 class="text-center">${post.title}</h3>
+			
 			<hr style="border-color: #555;">
 			<div class="row mt-3">
 				<div class="col-md-4 d-flex justify-content-between">
 					<a href="${pageContext.request.contextPath}/post/list"
-						class="btn btn-primary mx-3">Back To Post</a>
+						class="btn btn-outline-primary mx-3 text-white">Back To Post</a>
 				</div>
 			</div>
 			<br>
@@ -32,7 +91,7 @@
 							<h3>No New Comment.</h3>
 							<a
 								href="${pageContext.request.contextPath}/comment/new?postId=${post.id}"
-								class="btn btn-primary mx-3">Add New Comment</a>
+								class="btn btn-outline-primary mx-3 text-white">Add New Comment</a>
 						</div>
 						<div class="col-md-3"></div>
 					</div>
@@ -40,37 +99,31 @@
 				<c:when test="${not empty comments}">
 					<div class="comment-section p-3">
 						<div class="row">
-							<div class="col-md-3"></div>
-							<div class="col-md-6 text-center">
-								<h3>No New Comment.</h3>
+							<div class="col-md-6">
 								<a
 									href="${pageContext.request.contextPath}/comment/new?postId=${post.id}"
-									class="btn btn-primary mx-3">Add New Comment</a>
+									class="btn btn-outline-primary mb-3 text-white">Add New Comment</a>
 							</div>
-							<div class="col-md-3"></div>
 						</div>
 
 						<c:forEach var="comment" items="${comments}">
 							<div class="comment d-flex align-items-start mb-3">
-
-								<img src="path_to_author_avatar" class="rounded-circle"
-									width="40" height="40" alt="author">
+								<i class="fas fa-user-circle fa-2x pe-2" style="color: #fff;"></i>
 								<div class="comment-content ms-3 flex-grow-1">
 									<div class="d-flex justify-content-between">
 										<div>
-											<span class="fw-bold">Comment Created User name</span> <span
-												class="text-muted ms-2">${comment.createdAt}</span>
+											<span class="fw-bold">${comment.commentCreatedUserName}</span>
+											<span class="text-muted ms-2">${comment.createdAt}</span>
 										</div>
 										<div class="comment-actions">
 											<c:if test="${comment.createdUserId == loggedInUserId}">
 												<a href="edit?id=${comment.id}" class="text-muted me-2">Edit</a>
-												<a href="javascript:void(0)"
-													onclick="addLink(${comment.id})" class="text-danger">Delete</a>
+												<a href="javascript:void(0)" onclick="addLink(${comment.id})"
+													class="text-danger">Delete</a>
 											</c:if>
 										</div>
 									</div>
 									<p class="text-muted mt-2">${comment.description}</p>
-
 								</div>
 							</div>
 						</c:forEach>

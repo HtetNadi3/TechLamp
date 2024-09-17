@@ -19,7 +19,7 @@
                     <h4>Blog Admin</h4>
                 </div>
                 <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/dashboard">
+                    <li class="nav-item"><a class="nav-link active" href="${pageContext.request.contextPath}/dashboard/overview">
                         <i class="fas fa-tachometer-alt"></i> Dashboard
                     </a></li>
                     <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/dashboard/allPosts">

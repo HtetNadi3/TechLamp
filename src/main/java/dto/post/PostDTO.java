@@ -32,12 +32,13 @@ public class PostDTO {
         this.createdAt = post.getCreatedAt();
     }
 
-    public PostDTO(int id, String title, String content, String author, Date createdAt) {
+    public PostDTO(int id, String title, String content, String author, Date createdAt, int createdUserId) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.author = author;
         this.createdAt = createdAt;
+        this.createdUserId = createdUserId;
     }
 
     public PostDTO(int id, String title, String content, int createdUserId) {

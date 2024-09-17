@@ -10,6 +10,19 @@
   font-family: "Poppin", sans-serif;
 }
 
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.2); /* Adjust the opacity as needed */
+  backdrop-filter: blur(10px); /* Adjust the blur effect as needed */
+  border-radius: 10px; /* Adjust the border radius as needed */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+}
+
+.navbar {
+  /* Optional styling to remove default border */
+  border: none;
+}
+
+
 /* Theme Toggle Button */
 .toggle-theme-btn {
   background-color: transparent;

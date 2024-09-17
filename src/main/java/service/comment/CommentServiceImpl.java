@@ -1,6 +1,8 @@
 package service.comment;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import dao.comment.CommentDao;
@@ -19,9 +21,22 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentDTO> doGetAllComments() {
         return commentDao.dbGetAllComments().stream().map(comment -> {
-            return new CommentDTO(comment);
-        }).collect(Collectors.toList());
+            try {
+                String commentCreatedUserName = commentDao.dbGetCommentCreatedUserName(comment.getId());
+                
+                CommentDTO commentDto = new CommentDTO(comment);
+                commentDto.setCommentCreatedUserName(commentCreatedUserName);
+                return commentDto;
+                
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        })
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
     }
+
 
     @Override
     public CommentDTO doGetCommentById(int id) {
@@ -30,9 +45,21 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDTO> doGetCommentByPostId(int postId) {
-    	return commentDao.getCommentsByPostId(postId).stream().map(comment -> {
-            return new CommentDTO(comment);
-        }).collect(Collectors.toList());
+    	return commentDao.dbGetAllComments().stream().map(comment -> {
+            try {
+                String commentCreatedUserName = commentDao.dbGetCommentCreatedUserName(comment.getId());
+                
+                CommentDTO commentDto = new CommentDTO(comment);
+                commentDto.setCommentCreatedUserName(commentCreatedUserName);
+                return commentDto;
+                
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        })
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
     }
 
     @Override

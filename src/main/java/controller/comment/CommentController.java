@@ -29,13 +29,11 @@ public class CommentController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final CommentService commentService;
     private final PostService postService;
-    private final UserService userService;
 
     public CommentController() {
         super();
         this.postService = new PostServiceImpl();
         this.commentService = new CommentServiceImpl();
-        this.userService = new UserServiceImpl();
     }
 
     @Override
@@ -94,8 +92,7 @@ public class CommentController extends HttpServlet {
         
         HttpSession session = request.getSession();
         int loggedInUserId = (int) session.getAttribute("userId");
-        String loginUserName = (String) session.getAttribute("username");
-//        String commentCreatedUserName = 
+
         request.setAttribute("post", post);
         request.setAttribute("comments", comments);
         request.setAttribute("loggedInUserId", loggedInUserId);

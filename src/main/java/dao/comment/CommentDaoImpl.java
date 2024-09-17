@@ -22,7 +22,9 @@ public class CommentDaoImpl implements CommentDao {
     private final String DELETE_COMMENT_SQL = "UPDATE comment SET delete_flag=? WHERE id = ?";
     private final String IS_COMMENTED_SQL = "SELECT COUNT(*) FROM comment where created_user_id = ? and delete_flag = 0";
     private final  String COUNT_COMMENT = "SELECT COUNT(*) FROM comment WHERE post_id = ? and delete_flag = 0";
+    private final String COMMENT_CREATED_USER_NAME = "SELECT u.username FROM comment c JOIN users u ON c.created_user_id = u.id WHERE c.id = ?";
 
+    
     public CommentDaoImpl() {
         this.connection = DatabaseConnection.getInstance().getConnection();
     }
@@ -35,7 +37,7 @@ public class CommentDaoImpl implements CommentDao {
             statement.setString(1, comment.getDescription());
             statement.setInt(2, comment.getPostId());
             statement.setInt(3, 0);
-            statement.setInt(4, 100);
+            statement.setInt(4, comment.getCreatedUserId());
             statement.setDate(5, new Date(System.currentTimeMillis()));
             statement.setDate(6, null);
             statement.executeUpdate();
@@ -161,6 +163,21 @@ public class CommentDaoImpl implements CommentDao {
             e.printStackTrace();
         }
         return count;
+    }
+    
+    @Override
+    public String dbGetCommentCreatedUserName(int commentId) throws SQLException {
+        String username = null;
+        try (PreparedStatement statement = connection.prepareStatement(COMMENT_CREATED_USER_NAME)) {
+            statement.setInt(1, commentId); 
+            
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    username = resultSet.getString("username"); 
+                }
+            }
+        }
+        return username;
     }
 
 }

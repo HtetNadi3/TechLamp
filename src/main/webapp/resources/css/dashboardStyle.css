@@ -37,15 +37,8 @@ body {
 
 /* Sidebar */
 .sidebar {
-  position: fixed; /* Fixes the sidebar in place */
-  top: 0; /* Positions it at the top of the viewport */
-  left: 0; /* Positions it at the left of the viewport */
-  height: 1000vh; /* Makes it as tall as the viewport */
-  width: 250px; /* Adjust width as needed */
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.8); /* Optional: for visual contrast */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: add a shadow */
-  z-index: 1000; /* Ensures it's above other content */
+  
+  /* Ensures it's above other content */
 }
 
 

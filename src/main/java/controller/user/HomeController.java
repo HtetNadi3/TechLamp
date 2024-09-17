@@ -1,9 +1,7 @@
 package controller.user;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,10 +24,9 @@ import service.UserService;
 import service.UserServiceImpl;
 import service.post.PostService;
 import service.post.PostServiceImpl;
-import util.ImagePathUtil;
 import util.Route;
 
-@WebServlet({"/register", "/login", "/profile", "/singup", "/signin", "/profile/update"})
+@WebServlet({"/register", "/login", "/profile", "/singup", "/signin", "/profile/update", "/user"})
 @MultipartConfig
 public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -46,50 +43,24 @@ public class HomeController extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String path = request.getServletPath();
-		if (path == null || "/".equals(path)) {
-			Route.forwardToPage(Route.WELCOME, request, response);
-		} else if ("/register".equals(path)) {
-			Route.forwardToPage(Route.USER_REG, request, response);
-		} else if ("/login".equals(path)) {
-			Route.forwardToPage(Route.USER_LOGIN, request, response);
-
-		} else if ("/profile".equals(path)) {
-			HttpSession session = request.getSession();
-			Integer userId = (Integer) session.getAttribute("userId");
-
-			if (userId != null) {
-				UserDTO user;
-				try {
-					List<PostDTO> postDto = postService.doGetAllPosts().stream()
-						    .filter(post -> post.getCreatedUserId() == userId)
-						    .collect(Collectors.toList());
-
-					user = userservice.getUserById(userId);
-					
-					if(user.getProfile_img() != null) {
-						user.setProfile_img(ImagePathUtil.getImagePath(request, user.getProfile_img()));
-					} else {
-						user.setProfile_img(ImagePathUtil.getImagePath(request));
-					}
-					
-					request.setAttribute("user", user);
-					request.setAttribute("postList", postDto);
-					Route.forwardToPage(Route.USER_PROFILE, request, response);
-
-				} catch (Exception e) {
-
-					e.printStackTrace();
-				}
-
-			} else {
-				response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-			}
-		} else {
-			response.sendError(HttpServletResponse.SC_NOT_FOUND);
-		}
+	        throws ServletException, IOException {
+	    String path = request.getServletPath();
+	    
+	    if (path == null || "/".equals(path)) {
+	        Route.forwardToPage(Route.WELCOME, request, response);
+	    } else if ("/register".equals(path)) {
+	        Route.forwardToPage(Route.USER_REG, request, response);
+	    } else if ("/login".equals(path)) {
+	        Route.forwardToPage(Route.USER_LOGIN, request, response);
+	    } else if ("/profile".equals(path)) {
+	        handleProfileRequest(request, response);
+	    } else if ("/user".equals(path)) {
+	        handleUserProfileRequest(request, response);
+	    } else {
+	        response.sendError(HttpServletResponse.SC_NOT_FOUND);
+	    }
 	}
+
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -176,6 +147,65 @@ public class HomeController extends HttpServlet {
 		} else {
 			handleError("Username already exists", Route.USER_REG, request, response);
 		}
+	}
+	
+	private void handleProfileRequest(HttpServletRequest request, HttpServletResponse response)
+	        throws ServletException, IOException {
+	    HttpSession session = request.getSession();
+	    Integer userId = (Integer) session.getAttribute("userId");
+
+	    if (userId != null) {
+	        try {
+	            List<PostDTO> postDto = postService.doGetAllPosts().stream()
+	                    .filter(post -> post.getCreatedUserId() == userId)
+	                    .collect(Collectors.toList());
+
+	            UserDTO user = userservice.getUserById(userId);
+	            
+	            request.setAttribute("user", user);
+	            request.setAttribute("postList", postDto);
+//	            Route.redirectToPage("/profile", request, response);
+	            Route.forwardToPage(Route.USER_PROFILE, request, response);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	        }
+	    } else {
+	        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+	    }
+	}
+
+	private void handleUserProfileRequest(HttpServletRequest request, HttpServletResponse response)
+	        throws ServletException, IOException {
+	    String idParam = request.getParameter("id");
+	    if (idParam != null && !idParam.trim().isEmpty()) {
+	        try {
+	            idParam = idParam.replaceAll("[^\\d]", "");
+	            int userId = Integer.parseInt(idParam);
+
+	            UserDTO user = userservice.getUserById(userId);
+	            if (user != null) {
+	                List<PostDTO> posts = postService.doGetAllPosts().stream()
+	                        .filter(post -> post.getCreatedUserId() == userId)
+	                        .collect(Collectors.toList());
+
+	                request.setAttribute("user", user);
+	                request.setAttribute("postList", posts);
+//	                Route.redirectToPage("/user", request, response);
+	                Route.forwardToPage(Route.USER_PROFILE, request, response);
+	            } else {
+	                response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found");
+	            }
+	        } catch (NumberFormatException e) {
+	            e.printStackTrace();
+	            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid user ID format");
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	        }
+	    } else {
+	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User ID is missing");
+	    }
 	}
 
 	private void updateUserProfile(HttpServletRequest request, HttpServletResponse response) throws Exception {

@@ -79,7 +79,6 @@ public class PostController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		
 		doGet(request, response);
 	}
 
@@ -92,46 +91,44 @@ public class PostController extends HttpServlet {
 	}
 
 	private void listPosts(HttpServletRequest request, HttpServletResponse response, boolean isSearch)
-	        throws Exception {
+			throws Exception {
 
-	    String searchTitle = request.getParameter("searchTitle");
-	    String categoryIdStr = request.getParameter("categoryId");
+		String searchTitle = request.getParameter("searchTitle");
+		String categoryIdStr = request.getParameter("categoryId");
 
-	    List<PostDTO> posts;
+		List<PostDTO> posts;
 
-	    if (searchTitle != null && !searchTitle.trim().isEmpty() && categoryIdStr != null && !categoryIdStr.isEmpty()) {
-	        int categoryId = Integer.parseInt(categoryIdStr);
-	        posts = postService.searchPostsByTitleAndCategory(searchTitle, categoryId);
+		if (searchTitle != null && !searchTitle.trim().isEmpty() && categoryIdStr != null && !categoryIdStr.isEmpty()) {
+			int categoryId = Integer.parseInt(categoryIdStr);
+			posts = postService.searchPostsByTitleAndCategory(searchTitle, categoryId);
 
-	    } else if (categoryIdStr != null && !categoryIdStr.isEmpty()) { 
-	        int categoryId = Integer.parseInt(categoryIdStr);
-	        posts = postService.getPostsByCategoryId(categoryId);
+		} else if (categoryIdStr != null && !categoryIdStr.isEmpty()) {
+			int categoryId = Integer.parseInt(categoryIdStr);
+			posts = postService.getPostsByCategoryId(categoryId);
 
-	    } else if (searchTitle != null && !searchTitle.trim().isEmpty()) {
-	        posts = postService.doSearchPostsByTitle(searchTitle);
+		} else if (searchTitle != null && !searchTitle.trim().isEmpty()) {
+			posts = postService.doSearchPostsByTitle(searchTitle);
 
-	    } else { 
-	        posts = postService.doGetAllPosts();
-	    }
+		} else {
+			posts = postService.doGetAllPosts();
+		}
 
-	    List<UserDTO> users = userService.getAllUsers();
+		List<UserDTO> users = userService.getAllUsers();
 
-	    Map<Integer, Integer> commentCounts = new HashMap<>();
-	    for (PostDTO post : posts) {
-	        int commentCount = commentService.getCommentCountByPostId(post.getId());
-	        commentCounts.put(post.getId(), commentCount);
-	    }
+		Map<Integer, Integer> commentCounts = new HashMap<>();
+		for (PostDTO post : posts) {
+			int commentCount = commentService.getCommentCountByPostId(post.getId());
+			commentCounts.put(post.getId(), commentCount);
+		}
 
-	    request.setAttribute("postList", posts);
-	    request.setAttribute("users", users);
-	    request.setAttribute("commentCounts", commentCounts);
-	    
-	    request.setAttribute("categories", categoryService.doGetAllCategories());
+		request.setAttribute("postList", posts);
+		request.setAttribute("users", users);
+		request.setAttribute("commentCounts", commentCounts);
 
-	    Route.forwardToPage(Route.POST_LIST_JSP, request, response);
+		request.setAttribute("categories", categoryService.doGetAllCategories());
+
+		Route.forwardToPage(Route.POST_LIST_JSP, request, response);
 	}
-
-
 
 	private void showEditForm(HttpServletRequest request, HttpServletResponse response)
 			throws SQLException, ServletException, IOException {
@@ -160,7 +157,11 @@ public class PostController extends HttpServlet {
 			throws SQLException, IOException, ServletException {
 		int postId = Integer.parseInt(request.getParameter("id"));
 		PostDTO post = postService.dbGetPostById(postId);
+		
+		HttpSession session = request.getSession();
+		int loginUserId = (int) session.getAttribute("userId");
 		request.setAttribute("post", post);
+		request.setAttribute("loginUserId", loginUserId);
 		Route.forwardToPage(Route.POST_DETAIL_JSP, request, response);
 	}
 
@@ -174,7 +175,7 @@ public class PostController extends HttpServlet {
 		int createdUserId = (int) session.getAttribute("userId");
 
 		int categoryId = Integer.parseInt(request.getParameter("categoryId"));
-		
+
 		int commentCount = commentService.getCommentCountByPostId(id);
 
 		return new PostDTO(id, title, content, createdUserId, categoryId, commentCount);

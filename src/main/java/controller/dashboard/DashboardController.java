@@ -1,6 +1,7 @@
 package controller.dashboard;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -20,50 +21,73 @@ import service.post.PostService;
 import service.post.PostServiceImpl;
 import util.Route;
 
-@WebServlet("/dashboard")
-public class DashboardController extends HttpServlet{
+@WebServlet("/dashboard/*")
+public class DashboardController extends HttpServlet {
 
-	private static final long serialVersionUID = 1L;
-	private final PostService postService;
-	private final UserService userService;
-	private final CategoryService categoryService;
-	public DashboardController() {
+    private static final long serialVersionUID = 1L;
+    private final PostService postService;
+    private final UserService userService;
+    private final CategoryService categoryService;
+
+    public DashboardController() {
         super();
         this.postService = new PostServiceImpl();
         this.userService = new UserServiceImpl();
         this.categoryService = new CategoryServiceImpl();
     }
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getPathInfo();
+        
+        // Handle case where action is null
+        if (action == null || action.equals("/")) {
+            action = "/overview"; // Default action
+        }
 
-		try {
-			int userCount = userService.getUserCount();
-			int postCount = postService.getPostCount();
-			int categoryCount = categoryService.getCategoryCount();
-			List<PostDTO> posts = postService.doGetAllPosts();
-			List<UserDTO> users = userService.getAllUsers();
-			List<CategoryDTO> categories = categoryService.doGetAllCategories();
-			List<PostDTO> postsRecent = postService.getRecentPosts(5);
-			List<UserDTO> usersRecent = userService.getRecentUsers(5);
-			
-			req.setAttribute("posts", posts);
-			req.setAttribute("users", users);
-			req.setAttribute("categories", categories);
-			req.setAttribute("userCount", userCount);
-			req.setAttribute("postCount", postCount);
-			req.setAttribute("categoryCount", categoryCount);
-			req.setAttribute("recentPosts", postsRecent);
-			req.setAttribute("recentUsers", usersRecent);
-			Route.forwardToPage(Route.DASHBOARD, req, resp);
-//			Route.redirectToPage("/dashboard", req, resp);
-		
-		} catch (Exception e) {
-			e.printStackTrace();
-	            // Optionally forward to an error page
-	            req.setAttribute("errorMessage", "An error occurred while loading the dashboard.");
-	           
-			
-		}
-	}
+        try {
+            switch (action) {
+            case "/overview":
+                loadDashboardOverview(request, response);
+                break;
+            default:
+                Route.redirectToPage(Route.DASHBOARD, request, response);
+                break;
+            }
+        } catch (SQLException ex) {
+            throw new ServletException(ex);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
+
+    private void loadDashboardOverview(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        int userCount = userService.getUserCount();
+        int postCount = postService.getPostCount();
+        int categoryCount = categoryService.getCategoryCount();
+
+        List<PostDTO> recentPosts = postService.getRecentPosts(5);
+        List<UserDTO> recentUsers = userService.getRecentUsers(5);
+        List<CategoryDTO> categories = categoryService.doGetAllCategories();
+
+        for (CategoryDTO category : categories) {
+            int postCountByCategory = postService.getPostCountByCategory(category.getId());
+            category.setPostCount(postCountByCategory);
+        }
+
+        request.setAttribute("userCount", userCount);
+        request.setAttribute("postCount", postCount);
+        request.setAttribute("categoryCount", categoryCount);
+        request.setAttribute("recentPosts", recentPosts);
+        request.setAttribute("recentUsers", recentUsers);
+        request.setAttribute("categories", categories);
+
+        Route.forwardToPage(Route.DASHBOARD, request, response);
+    }
 }

@@ -13,6 +13,7 @@ public class CommentDTO {
     private Date createdAt;
     private Date updatedAt;
     private int commentCount;
+    private String commentCreatedUserName;
 
     public CommentDTO() {
     }
@@ -94,5 +95,13 @@ public class CommentDTO {
 
 	public void setCommentCount(int commentCount) {
 		this.commentCount = commentCount;
+	}
+
+	public String getCommentCreatedUserName() {
+		return commentCreatedUserName;
+	}
+
+	public void setCommentCreatedUserName(String commentCreatedUserName) {
+		this.commentCreatedUserName = commentCreatedUserName;
 	}
 }

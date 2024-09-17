@@ -9,16 +9,10 @@
 <title>User Profile</title>
 
 <style>
-.profile-image img {
-	border-radius: 50%;
-	width: 150px;
-	height: 150px;
-	object-fit: cover;
-	margin-bottom: 20px;
-}
+
 
 .user-info {
-	background-color: #f8f9fa;
+	background: rgba(255, 255, 255, 0.15);
 	padding: 20px;
 	border-radius: 10px;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -84,8 +78,7 @@
 						<div class="col-8">
 							<div class="w-100 p-3">
 								<div class="d-flex align-items-start mb-2">
-									<img src="${pageContext.request.contextPath}/img/profile.png"
-										class="rounded-circle me-3" width="50" height="50">
+									<i class="fas fa-user-circle fa-2x pe-2" style="color: #4b6b98"></i>
 									<div class="d-flex align-items-center mb-1">
 										<h6 class="fw-bold mb-0 fs-5">${post.author}</h6>
 										<span class="badge bg-primary ms-2">${post.categoryName}</span>
@@ -147,8 +140,8 @@
 										href="${pageContext.request.contextPath}/comment/list?postId=${post.id}">
 										<span class="text-muted me-3"><i class="fas fa-comment"></i>
 											${commentCounts[post.id]}</span>
-									</a> <span class="text-muted me-3"><i
-										class="fa-solid fa-heart"></i> 23</span>
+									</a> 
+									    	
 								</div>
 							</div>
 						</div>
@@ -189,8 +182,6 @@
 				<!-- User Profile Section -->
 				<div id="profile-view" class="user-profile">
 					<h1>User Profile</h1>
-
-
 
 					<!-- User Information Display -->
 					<div class="user-info">

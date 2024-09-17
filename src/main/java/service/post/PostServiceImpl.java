@@ -39,7 +39,7 @@ public class PostServiceImpl implements PostService {
 		if (post != null) {
 
 			String author = postDao.dbFindAuthorByPostId(id);
-			return new PostDTO(post.getId(), post.getTitle(), post.getContent(), author, post.getCreatedAt());
+			return new PostDTO(post.getId(), post.getTitle(), post.getContent(), author, post.getCreatedAt(), post.getCreatedUserId());
 		}
 		return null;
 	}
