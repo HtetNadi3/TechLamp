@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 
 import dto.UserDTO;
 import dto.post.PostDTO;
-import entity.User;
 import service.UserServiceImpl;
 import service.category.CategoryServiceImpl;
 import service.comment.CommentServiceImpl;
@@ -42,10 +41,7 @@ public class PostController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession();
-        User loggedInUser = (User) session.getAttribute("user");
 		String action = request.getPathInfo();
-		if (loggedInUser != null) {
 		try {
 			switch (action) {
 			case "/new":
@@ -77,11 +73,7 @@ public class PostController extends HttpServlet {
 		} catch (Exception ex) {
 			throw new ServletException(ex);
 		}
-		} else {
-            response.sendRedirect(request.getContextPath() + "/error/403");
-        }
-    } 
-
+	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -158,9 +150,7 @@ public class PostController extends HttpServlet {
 			throws SQLException, IOException, ServletException {
 		PostDTO updatedPost = getPostParameters(request);
 		postService.doUpdatePost(updatedPost);
-//		Route.redirectToPage("/post/detail", request, response);
-	    Route.redirectToPage("/post/detail?id=" + updatedPost.getId(), request, response);
-
+		Route.redirectToPage("/post/detail", request, response);
 	}
 
 	private void deletePost(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
