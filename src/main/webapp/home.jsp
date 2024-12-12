@@ -89,6 +89,11 @@
 												class="fas fa-comment"></i> ${commentCounts[post.id]}</span>
 										</a>
 										
+										<a
+											href="${pageContext.request.contextPath}/user/bookmark:${post.id}"
+											id="bookmark" class="text-muted text-decoration-none"> <i
+											class="fas fa-bookmark"></i> Bookmark
+										</a>
 
 									</div>
 								</div>

@@ -50,6 +50,13 @@
 						class="fa-solid fa-pen-to-square"></i> Write
 				</a></li>
 
+				<!-- Dark/Light Mode Toggle Button -->
+				<li class="nav-item">
+					<button class="btn toggle-theme-btn ms-3" id="theme-toggle">
+						<i class="fas fa-moon fa-lg"></i>
+					</button>
+				</li>
+
 				<!-- Profile Icon with Dropdown -->
 				<li class="nav-item dropdown"><a
 					class="nav-link dropdown-toggle ms-3" href="#" id="profileDropdown"
@@ -62,7 +69,11 @@
 							href="${pageContext.request.contextPath}/profile?id=${user.id}">
 								<i class="fas fa-user me-2"></i>Profile
 						</a></li>
-						
+						<li><a
+							href="${pageContext.request.contextPath}/user/bookmark?id=${post.id}"
+							> <i
+								class="fas fa-bookmark"></i> Bookmark
+						</a></li>
 						<li><a class="dropdown-item"
 							href="${pageContext.request.contextPath}/logout"> <i
 								class="fa-solid fa-right-from-bracket me-2"></i>Logout

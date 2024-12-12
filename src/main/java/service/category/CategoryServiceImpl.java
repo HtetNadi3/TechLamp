@@ -29,6 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
         	CategoryDTO categoryDto = new CategoryDTO(category);
         	categoryDto.setCount(Count);
             return categoryDto;
+            return new CategoryDTO(category);
         }).collect(Collectors.toList());
     }
 

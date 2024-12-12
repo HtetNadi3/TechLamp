@@ -98,10 +98,10 @@ public class CategoryController extends HttpServlet {
     private void listCategories(HttpServletRequest request, HttpServletResponse response, boolean isSearch)
             throws SQLException, IOException, ServletException {
         List<CategoryDTO> categories = categoryService.doGetAllCategories();
-//        for (CategoryDTO category : categories) {
-//            int postCount = cate
-//            category.setPostCount(postCount);
-//        }
+        for (CategoryDTO category : categories) {
+            int postCount = postService.getPostCountByCategory(category.getId());
+            category.setPostCount(postCount);
+        }
         request.setAttribute("categoryList", categories);
 
         Route.forwardToPage(Route.DASHBOARD_ALL_CATEGORIES, request, response);

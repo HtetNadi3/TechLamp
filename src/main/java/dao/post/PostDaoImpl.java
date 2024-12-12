@@ -23,6 +23,7 @@ public class PostDaoImpl implements PostDao {
     private final String AUTHOR = "SELECT u.username as username FROM post as p JOIN users as u ON p.created_user_id = u.id WHERE p.id = ?";
     private final String SEARCH_POST_BY_TITLE = "SELECT * FROM post WHERE title LIKE ?";
     private final String POST_COUNT = "SELECT COUNT(*) FROM post";
+    private final String POST_COUNT_BY_CATEGORY = "SELECT COUNT(*) FROM post WHERE category_ids = ?";
     private static final String GET_POST_COUNT_BY_USERID = "SELECT COUNT(*) FROM post WHERE created_user_id = ?";
     private final String RECENT_POSTS = "SELECT * FROM post ORDER BY created_at DESC LIMIT ?";
     private final String POSTS_BY_CATEGORY = "SELECT * FROM post WHERE category_id = ? AND delete_flag = 0";
@@ -173,7 +174,26 @@ public class PostDaoImpl implements PostDao {
         return count;
     }
 
-   
+    @Override
+    public int getPostCountByCategory(int categoryId) throws SQLException {
+        int count = 0;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(POST_COUNT_BY_CATEGORY)) {
+
+            preparedStatement.setInt(1, categoryId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    count = resultSet.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+
     @Override
     public int getPostCountByUser(int userId) throws SQLException {
         int postCount = 0;

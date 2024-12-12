@@ -88,6 +88,11 @@ public class DashboardController extends HttpServlet {
         List<UserDTO> recentUsers = userService.getRecentUsers(5);
         List<CategoryDTO> categories = categoryService.doGetAllCategories();
 
+        for (CategoryDTO category : categories) {
+            int postCountByCategory = postService.getPostCountByCategory(category.getId());
+            category.setPostCount(postCountByCategory);
+        }
+
         request.setAttribute("userCount", userCount);
         request.setAttribute("postCount", postCount);
         request.setAttribute("categoryCount", categoryCount);

@@ -226,6 +226,7 @@
 					<h1>Edit Profile</h1>
 					<c:url var="profileUpdate" value="/profile/update"></c:url>
 					<form action="${profileUpdate}" method="post"
+						enctype="multipart/form-data"
 						onsubmit="return validateProfileUpdate()">
 						<input type="hidden" name="userId" value="${user.id}" />
 

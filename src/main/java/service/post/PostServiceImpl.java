@@ -72,7 +72,10 @@ public class PostServiceImpl implements PostService {
 		return postDao.getPostCount();
 	}
 
-	
+	@Override
+	public int getPostCountByCategory(int categoryId) throws SQLException {
+		return postDao.getPostCountByCategory(categoryId);
+	}
 
 	@Override
 	public int getPostCountByUser(int userId) throws SQLException {

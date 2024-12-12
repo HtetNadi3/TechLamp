@@ -3,7 +3,9 @@ package controller.comment;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,7 +16,8 @@ import javax.servlet.http.HttpSession;
 
 import dto.comment.CommentDTO;
 import dto.post.PostDTO;
-
+import service.UserService;
+import service.UserServiceImpl;
 import service.comment.CommentService;
 import service.comment.CommentServiceImpl;
 import service.post.PostService;
